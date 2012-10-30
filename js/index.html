@@ -1,0 +1,77 @@
+<html>
+  <head>
+    <style>
+      body {
+        font-size: 0.9em;
+      }
+
+      p {
+        padding: 0;
+        margin: 0;
+        margin-top: 0.5em;
+      }
+
+      h1 {
+        font-size: 1.3em;
+        background-color: #eee;
+        padding-left: 0.5em;
+      }
+
+      h2 {
+        font-size: 1em;
+        background-color: #f1f1f1;
+        padding-left: 1em;
+        margin-left: 2em;
+      }
+
+      #wave-form p {
+        margin-left: 2em;
+      }
+
+      .form-field-label {
+        margin-right: 2em;
+      }
+
+      .submit {
+        background-color: #f53;
+        color: #fef;
+        font-size: 0.8em;
+        padding-left: 2em;
+        padding-right: 2em;
+      }
+
+      #wave-base64 {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="wave-form">
+      <h1>出力設定</h1>
+      <p><span class="form-field-label">サンプリングレート</span><span><input type="text" value="44100" id="samples-per-second-field">Hz</span></p>
+      <p><span class="form-field-label">チャンネル数</span><span><input type="text" value="2" id="channels-field"></input></p>
+      <p><span class="form-field-label">サンプリングサイズ</span><span><input type="text" value="2" id="bytes-per-sample-field">バイト</span></p>
+      <p><span class="form-field-label">長さ</span><span><input type="text" value="1000" id="milliseconds-field">ミリ秒</span></p>
+      <h1>波形設定</h1>
+      <p>
+        <span class="form-field-label">種類</span>
+        <span>
+          <input type="radio" value="sin" name="wave-type" id="wave-type-sin" checked="checked"><label for="wave-type-sin">正弦波</label>
+          <input type="radio" value="rect" name="wave-type" id="wave-type-rect"><label for="wave-type-rect">矩形波</label>
+          <input type="radio" value="saw" name="wave-type" id="wave-type-saw"><label for="wave-type-saw">のこぎり波</label>
+        </span>
+      </p>
+      <p><span class="form-field-label">周波数</span><span><input type="text" value="440" id="wave-rate-field">Hz</span></p>
+      <p><span class="form-field-label">音量</span><span><input type="text" value="50" id="wave-volume-field">%</span></p>
+      <p><input type="submit" value="作成" class="submit"></p>
+      <h1>結果</h1>
+      <h2>音</h2>
+      <p><audio controls="controls" id="audio"></audio></p>
+      <h2>先頭100ミリ秒間の波形</h2>
+      <p><canvas width="960" height="240" id="wave-canvas"></canvas></p>
+      <h2>Base64</h2>
+      <p><textarea id="wave-base64"></textarea></p>
+    </form>
+    <script type="text/javascript" src="./web_wave.js"></script>
+  </body>
+</html>
