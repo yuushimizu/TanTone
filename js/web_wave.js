@@ -90,19 +90,24 @@
             return timeRate < 0.5 ? 1 : -1;
         },
         'saw': function(timeRate) {
-            return timeRate * 2 - 1;
+            return ((timeRate + 0.5) % 1 * 2) - 1;
         }
     };
-    var readWaveType = function(waveId, alternationId) {
-        for (var type in waveFunctions) if (document.getElementById('wave-type-' + type + '-' + waveId + '-' + alternationId).checked) return type;
-        return null;
+    var waveAlternationMethods = {
+        'average': function(valueForCurrent, valueForNext, timeForAlternation) {
+            return valueForCurrent * (1 - timeForAlternation) + valueForNext * timeForAlternation;
+        },
+        'immediately': function(valueForCurrent, valueForNext, timeForAlternation) {
+            return valueForCurrent;
+        }
     };
     var readWaveAlternationSettings = function(waveId, alternationId) {
         if (!document.getElementById('wave-enabled-' + waveId + '-' + alternationId).checked) return null;
-        var type = readWaveType(waveId, alternationId);
+        var type = document.getElementById('wave-type-' + waveId + '-' + alternationId).value;
         return {
             type: type,
             waveFunction: waveFunctions[type],
+            alternationMethod: waveAlternationMethods[document.getElementById('wave-alternation-method-' + waveId + '-' + alternationId).value],
             start: parseInt(document.getElementById('wave-start-field-' + waveId + '-' + alternationId).value),
             rate: parseInt(document.getElementById('wave-rate-field-' + waveId + '-' + alternationId).value),
             volume: parseInt(document.getElementById('wave-volume-field-' + waveId + '-' + alternationId).value)
@@ -151,39 +156,47 @@
     };
     var makeSingleDataValues = function(outputSettings, waveSettings) {
         var values = emptyValues(outputSettings);
-        if (waveSettings.alternationsSettings.length <= 0) return values;
+        var alternationsSettings = waveSettings.alternationsSettings;
+        if (alternationsSettings.length <= 0) return values;
         var millisecondsToSamples = function(milliseconds) {
             return Math.floor(outputSettings.samplesPerSecond * milliseconds / 1000);
         };
         var currentTimeForWaveLoop = 0;
+        var currentAlternationSettingsIndex = -1;
+        var currentAlternationSettings = null;
+        var nextAlternationSettings = alternationsSettings[0];
         for (var sample = 0; sample < outputSettings.sampleCount; ++sample) {
-            var currentAlternationSettings = null;
-            var nextAlternationSettings = null;
-            for (var i = 0; i < waveSettings.alternationsSettings.length; ++i) {
-                if (sample >= millisecondsToSamples(waveSettings.alternationsSettings[i].start)) {
-                    currentAlternationSettings = waveSettings.alternationsSettings[i];
-                    nextAlternationSettings = (i + 1 < waveSettings.alternationsSettings.length) ? waveSettings.alternationsSettings[i + 1] : null;
-                }
+            while (nextAlternationSettings && sample >= millisecondsToSamples(nextAlternationSettings.start)) {
+                currentAlternationSettings = nextAlternationSettings;
+                currentAlternationSettingsIndex++;
+                nextAlternationSettings = currentAlternationSettingsIndex + 1 < alternationsSettings.length ? alternationsSettings[currentAlternationSettingsIndex + 1] : null;
+            }
+            var valueForCurrentAlternation;
+            var currentStart;
+            var currentRate;
+            if (!currentAlternationSettings) {
+                valueForCurrentAlternation = 0;
+                currentStart = 0;
+                currentRate = 0;
+            } else {
+                valueForCurrentAlternation = currentAlternationSettings.waveFunction(currentTimeForWaveLoop) * (outputSettings.maxValue * currentAlternationSettings.volume / 100);
+                currentStart = currentAlternationSettings.start;
+                currentRate = currentAlternationSettings.rate;
             }
             var rate;
-            var volume;
-            if (nextAlternationSettings && nextAlternationSettings.start > currentAlternationSettings.start) {
-                var currentTimeInAlternation = (sample - millisecondsToSamples(currentAlternationSettings.start)) / millisecondsToSamples(nextAlternationSettings.start);
-                rate = currentAlternationSettings.rate + currentTimeInAlternation * (nextAlternationSettings.rate - currentAlternationSettings.rate);
-                volume = currentAlternationSettings.volume + currentTimeInAlternation * (nextAlternationSettings.volume - currentAlternationSettings.volume);
-            } else {
-                rate = currentAlternationSettings.rate;
-                volume = currentAlternationSettings.volume;
-            }
             var value;
-            if (!currentAlternationSettings) {
-                value = 0;
+            if (nextAlternationSettings && nextAlternationSettings.start > currentStart) {
+                var currentTimeForAlternation = (sample - millisecondsToSamples(currentStart)) / (millisecondsToSamples(nextAlternationSettings.start) - millisecondsToSamples(currentStart));
+                var valueForNextAlternation = nextAlternationSettings.waveFunction(currentTimeForWaveLoop) * (outputSettings.maxValue * nextAlternationSettings.volume / 100);
+                var alternationMethod = nextAlternationSettings.alternationMethod;
+                value =  alternationMethod(valueForCurrentAlternation, valueForNextAlternation, currentTimeForAlternation);
+                rate = alternationMethod(currentRate, nextAlternationSettings.rate, currentTimeForAlternation);// + currentTimeForAlternation * (nextAlternationSettings.rate - currentRate);
             } else {
-                var currentTimeForWave = sample / (outputSettings.samplesPerSecond / rate);
-                value = currentAlternationSettings.waveFunction(currentTimeForWaveLoop) * (outputSettings.maxValue * volume / 100);
-                currentTimeForWaveLoop += + rate / outputSettings.samplesPerSecond;
-                currentTimeForWaveLoop -= Math.floor(currentTimeForWaveLoop);
+                value = valueForCurrentAlternation;
+                rate = currentRate;
             }
+            currentTimeForWaveLoop += + rate / outputSettings.samplesPerSecond;
+            currentTimeForWaveLoop -= Math.floor(currentTimeForWaveLoop);
             for (var channel = 0; channel < outputSettings.channels; ++channel) {
                 values[channel][sample] = value;
             }

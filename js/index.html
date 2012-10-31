@@ -132,13 +132,24 @@
                 <p>
                   <span class="form-field-label">種類</span>
                   <span>
-                    <input type="radio" value="sin" name="wave-type-:template-wave-id:-:template-alternation-id:" id="wave-type-sin-:template-wave-id:-:template-alternation-id:" checked="checked"><label for="wave-type-sin-:template-wave-id:-:template-alternation-id:">正弦波</label>
-                    <input type="radio" value="rect" name="wave-type-:template-wave-id:-:template-alternation-id:" id="wave-type-rect-:template-wave-id:-:template-alternation-id:"><label for="wave-type-rect-:template-wave-id:-:template-alternation-id:">矩形波</label>
-                    <input type="radio" value="saw" name="wave-type-:template-wave-id:-:template-alternation-id:" id="wave-type-saw-:template-wave-id:-:template-alternation-id:"><label for="wave-type-saw-:template-wave-id:-:template-alternation-id:">のこぎり波</label>
+                    <select id="wave-type-:template-wave-id:-:template-alternation-id:">
+                      <option value="sin" selected="selected">正弦波</option>
+                      <option value="rect">矩形波</option>
+                      <option value="saw">のこぎり波</option>
+                    </select>
                   </span>
                 </p>
                 <p><span class="form-field-label">周波数</span><span><input type="text" value="440" id="wave-rate-field-:template-wave-id:-:template-alternation-id:">Hz</span></p>
                 <p><span class="form-field-label">音量</span><span><input type="text" value="50" id="wave-volume-field-:template-wave-id:-:template-alternation-id:">%</span></p>
+                <p>
+                  <span class="form-field-label">変化方法</span>
+                  <span>
+                    <select id="wave-alternation-method-:template-wave-id:-:template-alternation-id:">
+                      <option value="average" select="selected">滑らかに</option>
+                      <option value="immediately">急に</option>
+                    </select>
+                    </span>
+                </p>
                 <div class="wave-alternation-footer">
                   <p><a href="javascript:void(0)" id="delete-wave-alternation-:template-wave-id:-:template-alternation-id:">削除</a></p>
                 </div>
