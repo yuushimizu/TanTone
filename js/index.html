@@ -6,29 +6,50 @@
       * {
         padding: 0;
         margin: 0;
+        font-family: monospace;
       }
       
       body {
         font-size: 0.9em;
         padding-bottom: 3em;
+        background-image: url("./images/background.png");
+      }
+
+      p img.icon {
+        height: 1.4em;
+        width: 1.4em;
+        margin-left: 0.2em;
+        margin-right: 0.2em;
+        vertical-align: text-bottom;
       }
 
       a {
         color: #169;
+        font-weight: bold;
+        text-decoration: none;
       }
 
       h1 {
         font-size: 1.3em;
         background-color: #124;
         color: #eef;
+        padding: 0.2em;
         padding-left: 0.5em;
         margin-bottom: 0.5em;
+        vertical-align: text-bottom;
+      }
+
+      h1 img.icon {
+        height: 1em;
+        width: 1em;
+        margin-left: 0.2em;
       }
 
       h2 {
         font-size: 1em;
         background-color: #235;
         color: #eef;
+        padding: 0.2em;
         padding-left: 0.5em;
         margin-bottom: 0.5em;
         margin-top: 1em;
@@ -38,6 +59,7 @@
         font-size: 1em;
         background-color: #346;
         color: #eef;
+        padding: 0.2em;
         padding-left: 0.5em;
       }
 
@@ -50,7 +72,12 @@
         margin-right: 2em;
       }
 
-      .submit {
+      .input-text {
+        padding: 0.2em;
+        margin-right: 0.2em;
+      }
+
+      .input-submit {
         background-color: #f53;
         color: #fef;
         font-size: 1em;
@@ -58,6 +85,12 @@
         padding-right: 3em;
         padding-top: 0.5em;
         padding-bottom: 0.5em;
+      }
+
+      .output-settings .form-field-label {
+        display: inline-block;
+        width: 10em;
+        margin-bottom: 1em;
       }
       
       #wave-link {
@@ -94,7 +127,7 @@
       }
 
       .wave-alternation-form {
-        width: 20em;
+        width: 25em;
         display: inline-block;
         margin-right: 1em;
         margin-top: 1em;
@@ -103,6 +136,12 @@
         border: solid 1px #346;
         border-top: solid 0.7em #346;
         background-color: #fff;
+      }
+
+      .wave-alternation-form .form-field-label {
+        display: inline-block;
+        width: 4em;
+        margin-bottom: 1em;
       }
 
       .wave-alternation-header {
@@ -121,57 +160,57 @@
   </head>
   <body>
     <form id="form">
-      <h1>出力設定</h1>
-      <div class="section">
-        <p><span class="form-field-label">サンプリングレート</span><span><input type="text" value="44100" id="samples-per-second-field">Hz</span></p>
-        <p><span class="form-field-label">チャンネル数</span><span><input type="text" value="2" id="channels-field"></input></p>
-        <p><span class="form-field-label">サンプリングサイズ</span><span><input type="text" value="2" id="bytes-per-sample-field">バイト</span></p>
-        <p><span class="form-field-label">長さ</span><span><input type="text" value="1000" id="length-field">ミリ秒</span></p>
+      <h1>出力設定<img class="icon" src="./images/icon-jerryfish.png"></h1>
+      <div class="section output-settings">
+        <p><span class="form-field-label">サンプリングレート</span><span><input type="text" class="input-text" value="44100" id="output-samples-per-second">Hz</span></p>
+        <p><span class="form-field-label">チャンネル数</span><span><input type="text" class="input-text" value="2" id="output-channels"></p>
+        <p><span class="form-field-label">サンプリングサイズ</span><span><input type="text" class="input-text" value="2" id="output-bytes-per-sample">バイト</span></p>
+        <p><span class="form-field-label">長さ</span><span><input type="text" class="input-text" value="1000" id="output-length">ミリ秒</span></p>
       </div>
-      <h1>波形設定</h1>
-      <div class="section">
+      <h1>波形設定<img class="icon" src="./images/icon-snake.png"></h1>
+      <div class="section wave-settings">
         <div class="template" id="wave-template">
           <div class="wave-form" id="wave-:template-wave-id:">
             <div class="wave-header">
-              <p><a href="javascript:void(0)" id="wave-add-alternation-:template-wave-id:">一番右に変化点を追加 ＞＞</a></p>
+              <p><a href="javascript:void(0)" id="wave-:template-wave-id:-add-alternation">一番右に変化点を追加<img class="icon" src="./images/icon-right.png"></a></p>
             </div>
-            <div class="template" id="wave-alternation-template-:template-wave-id:">
-              <div class="wave-alternation-form" id="wave-alternation-:template-wave-id:-:template-alternation-id:">
+            <div class="template" id="wave-:template-wave-id:-alternation-template">
+              <div class="wave-alternation-form" id="wave-:template-wave-id:-alternation-:template-alternation-id:">
                 <div class="wave-alternation-header">
-                  <p><a href="javascript:void(0)" id="wave-insert-alternation-:template-wave-id:-:template-alternation-id:">＜＜ 左側に変化点を挿入</a></p>
+                  <p><a href="javascript:void(0)" id="wave-:template-wave-id:-alternation-:template-alternation-id:-insert"><img class="icon" src="./images/icon-left.png">左側に変化点を挿入</a></p>
                 </div>
-                <p><span class="form-field-label">有効</span><span><input type="checkbox" id="wave-enabled-:template-wave-id:-:template-alternation-id:" checked="checked"></span></p>
-                <p><span class="form-field-label">開始</span><span><input type="text" value="0" id="wave-start-field-:template-wave-id:-:template-alternation-id:">ミリ秒</span></p>
+                <p><span class="form-field-label">有効</span><span><input type="checkbox" class="input-checkbox" id="wave-:template-wave-id:-alternation-:template-alternation-id:-enabled" checked="checked"></span></p>
+                <p><span class="form-field-label">開始</span><span><input type="text" class="input-text" value="0" id="wave-:template-wave-id:-alternation-:template-alternation-id:-start">ミリ秒</span></p>
                 <p>
                   <span class="form-field-label">種類</span>
                   <span>
-                    <select id="wave-type-:template-wave-id:-:template-alternation-id:">
+                    <select id="wave-:template-wave-id:-alternation-:template-alternation-id:-type">
                       <option value="sin" selected="selected">正弦波</option>
                       <option value="rect">矩形波</option>
                       <option value="saw">のこぎり波</option>
                     </select>
                   </span>
                 </p>
-                <p><span class="form-field-label">周波数</span><span><input type="text" value="440" id="wave-rate-field-:template-wave-id:-:template-alternation-id:">Hz</span></p>
-                <p><span class="form-field-label">音量</span><span><input type="text" value="50" id="wave-volume-field-:template-wave-id:-:template-alternation-id:">%</span></p>
+                <p><span class="form-field-label">周波数</span><span><input type="text" class="input-text" value="440" id="wave-:template-wave-id:-alternation-:template-alternation-id:-rate">Hz</span></p>
+                <p><span class="form-field-label">音量</span><span><input type="text" class="input-text" value="50" id="wave-:template-wave-id:-alternation-:template-alternation-id:-volume">%</span></p>
                 <p>
                   <span class="form-field-label">変化方法</span>
                   <span>
-                    <select id="wave-alternation-method-:template-wave-id:-:template-alternation-id:">
+                    <select id="wave-:template-wave-id:-alternation-:template-alternation-id:-method">
                       <option value="average" select="selected">滑らかに</option>
                       <option value="immediately">急に</option>
                     </select>
                     </span>
                 </p>
                 <div class="wave-alternation-footer">
-                  <p><a href="javascript:void(0)" id="delete-wave-alternation-:template-wave-id:-:template-alternation-id:">削除</a></p>
+                  <p><a href="javascript:void(0)" id="wave-:template-wave-id:-alternation-:template-alternation-id:-delete"><img class="icon" src="./images/icon-delete.png">削除</a></p>
                 </div>
               </div>
             </div>
-            <div class="wave-alternation-forms" id="wave-alternations-:template-wave-id:">
+            <div class="wave-alternation-forms" id="wave-:template-wave-id:-alternations">
             </div>
             <div class="wave-footer">
-              <p><a href="javascript:void(0)" id="delete-wave-:template-wave-id:">削除</a></p>
+              <p><a href="javascript:void(0)" id="wave-:template-wave-id:-delete"><img class="icon" src="./images/icon-delete.png">削除</a></p>
             </div>
           </div>
         </div>
@@ -179,11 +218,11 @@
         </div>
         <p><a href="javascript:void(0)" id="add-wave-form">波形を追加</a></p>
       </div>
-      <h1>結果</h1>
-      <div class="section">
+      <h1>出力<img class="icon" src="./images/icon-obake.png"></h1>
+      <div class="section result">
         <p>
-          <input type="submit" value="作成" class="submit">
-          <a href="javascript:void(0)" target="_blank" id="wave-link">WAVEファイル</a>
+          <input type="submit" class="input-submit" value="作成">
+          <a href="javascript:void(0)" target="_blank" id="wave-link">WAVEファイル<img class="icon" src="./images/icon-file.png"></a>
         </p>
         <h2>音</h2>
         <p><audio controls="controls" id="audio"></audio></p>

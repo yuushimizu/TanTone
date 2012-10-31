@@ -39,10 +39,10 @@
         removeChild(node.parentNode, node);
     };
     var readOutputSettings = function() {
-        var samplesPerSecond = parseInt(document.getElementById('samples-per-second-field').value);
-        var channels = parseInt(document.getElementById('channels-field').value);
-        var bytesPerSample = parseInt(document.getElementById('bytes-per-sample-field').value);
-        var length = parseInt(document.getElementById('length-field').value);
+        var samplesPerSecond = parseInt(document.getElementById('output-samples-per-second').value);
+        var channels = parseInt(document.getElementById('output-channels').value);
+        var bytesPerSample = parseInt(document.getElementById('output-bytes-per-sample').value);
+        var length = parseInt(document.getElementById('output-length').value);
         var sampleCount = Math.floor(samplesPerSecond * length / 1000);
         return {
             samplesPerSecond: samplesPerSecond,
@@ -66,26 +66,26 @@
         var addAlternationForm = function(nextElement) {
             var alternationId = nextAlternationId;
             nextAlternationId++;
-            var clone = document.getElementById('wave-alternation-template-' + id).cloneNode(true);
+            var clone = document.getElementById('wave-' + id + '-alternation-template').cloneNode(true);
             clone.innerHTML = clone.innerHTML.replace(/\:template\-alternation\-id\:/g, alternationId);
             var element = firstChildElement(clone);
-            var parent = document.getElementById('wave-alternations-' + id);
+            var parent = document.getElementById('wave-' + id + '-alternations');
             if (nextElement) {
                 parent.insertBefore(element, nextElement);
             } else {
                 parent.appendChild(element);
             }
-            document.getElementById('wave-insert-alternation-' + id + '-' + alternationId).onclick = function(event) {
+            document.getElementById('wave-' + id + '-alternation-' + alternationId + '-insert').onclick = function(event) {
                 addAlternationForm(element);
             };
-            document.getElementById('delete-wave-alternation-' + id + '-' + alternationId).onclick = function(event) {
+            document.getElementById('wave-' + id + '-alternation-' + alternationId + '-delete').onclick = function(event) {
                 removeNode(element);
             };
         }
-        document.getElementById('wave-add-alternation-' + id).onclick = function(event) {
+        document.getElementById('wave-' + id + '-add-alternation').onclick = function(event) {
             addAlternationForm();
         };
-        document.getElementById('delete-wave-' + id).onclick = function(event) {
+        document.getElementById('wave-' + id + '-delete').onclick = function(event) {
             removeNode(element);
         };
         addAlternationForm();
@@ -110,22 +110,22 @@
         }
     };
     var readWaveAlternationSettings = function(waveId, alternationId) {
-        if (!document.getElementById('wave-enabled-' + waveId + '-' + alternationId).checked) return null;
-        var type = document.getElementById('wave-type-' + waveId + '-' + alternationId).value;
+        if (!document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-enabled').checked) return null;
+        var type = document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-type').value;
         return {
             type: type,
             waveFunction: waveFunctions[type],
-            alternationMethod: waveAlternationMethods[document.getElementById('wave-alternation-method-' + waveId + '-' + alternationId).value],
-            start: parseInt(document.getElementById('wave-start-field-' + waveId + '-' + alternationId).value),
-            rate: parseInt(document.getElementById('wave-rate-field-' + waveId + '-' + alternationId).value),
-            volume: parseInt(document.getElementById('wave-volume-field-' + waveId + '-' + alternationId).value)
+            alternationMethod: waveAlternationMethods[document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-method').value],
+            start: parseInt(document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-start').value),
+            rate: parseInt(document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-rate').value),
+            volume: parseInt(document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-volume').value)
         };
     };
     var readWaveSettings = function(waveId) {
-        var waveAlternationForms = childElements(document.getElementById('wave-alternations-' + waveId));
+        var waveAlternationForms = childElements(document.getElementById('wave-' + waveId + '-alternations'));
         var alternationsSettings = [];
         for (var i = 0; i < waveAlternationForms.length; ++i) {
-            var alternationId = waveAlternationForms[i].id.match(/\-([^\-]+)$/)[1];
+            var alternationId = waveAlternationForms[i].id.match(/alternation\-([^\-]+)/)[1];
             var alternationSettings = readWaveAlternationSettings(waveId, alternationId);
             if (alternationSettings) alternationsSettings.push(alternationSettings);
         }
@@ -137,7 +137,7 @@
         var waveForms = childElements(document.getElementById('wave-forms'));
         var wavesSettings = [];
         for (var i = 0; i < waveForms.length; ++i) {
-            var waveId = waveForms[i].id.match(/^wave-(.+)$/)[1];
+            var waveId = waveForms[i].id.match(/^wave\-([^\-]+)/)[1];
             wavesSettings.push(readWaveSettings(waveId));
         }
         return wavesSettings;
