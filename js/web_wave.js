@@ -20,16 +20,16 @@
         return encoded;
     };
     var readOutputSettings = function() {
-        var samplesPerSecond = document.getElementById('samples-per-second-field').value || 44100;
-        var channels = document.getElementById('channels-field').value || 2;
-        var bytesPerSample = document.getElementById('bytes-per-sample-field').value || 2;
-        var milliseconds = document.getElementById('milliseconds-field').value || 1000;
-        var sampleCount = Math.floor(samplesPerSecond * milliseconds / 1000);
+        var samplesPerSecond = document.getElementById('samples-per-second-field').value;
+        var channels = document.getElementById('channels-field').value;
+        var bytesPerSample = document.getElementById('bytes-per-sample-field').value;
+        var length = document.getElementById('length-field').value;
+        var sampleCount = Math.floor(samplesPerSecond * length / 1000);
         return {
             samplesPerSecond: samplesPerSecond,
             channels: channels,
             bytesPerSample: bytesPerSample,
-            milliseconds: milliseconds,
+            length: length,
             sampleCount: sampleCount,
             dataLength: sampleCount * bytesPerSample * channels,
             maxValue: Math.pow(255, bytesPerSample) / 2
@@ -55,8 +55,10 @@
         return {
             type: type,
             waveFunction: waveFunctions[type],
-            rate: document.getElementById('wave-rate-field-' + number).value || 440,
-            volume: document.getElementById('wave-volume-field-' + number).value || 50
+            start: document.getElementById('wave-start-field-' + number).value,
+            length: document.getElementById('wave-length-field-' + number).value,
+            rate: document.getElementById('wave-rate-field-' + number).value,
+            volume: document.getElementById('wave-volume-field-' + number).value
         };
     };
     var readWavesSettings = function() {
@@ -89,9 +91,16 @@
     };
     var makeSingleDataValues = function(outputSettings, waveSettings) {
         var values = emptyValues(outputSettings);
+        var startSampleIndex = Math.floor(outputSettings.samplesPerSecond * waveSettings.start / 1000);
+        var length = Math.floor(outputSettings.samplesPerSecond * waveSettings.length / 1000);
         for (var sample = 0; sample < outputSettings.sampleCount; ++sample) {
-            var currentTimeForWave = sample / (outputSettings.samplesPerSecond / waveSettings.rate);
-            var value = waveSettings.waveFunction(currentTimeForWave - Math.floor(currentTimeForWave)) * (outputSettings.maxValue * waveSettings.volume / 100);
+            var value;
+            if (sample >= startSampleIndex && sample < startSampleIndex + length) {
+                var currentTimeForWave = sample / (outputSettings.samplesPerSecond / waveSettings.rate);
+                value = waveSettings.waveFunction(currentTimeForWave - Math.floor(currentTimeForWave)) * (outputSettings.maxValue * waveSettings.volume / 100);
+            } else {
+                value = 0;
+            }
             for (var channel = 0; channel < outputSettings.channels; ++channel) {
                 values[channel][sample] = value;
             }
