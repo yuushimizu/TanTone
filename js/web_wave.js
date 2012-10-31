@@ -63,13 +63,21 @@
         var element = firstChildElement(clone);
         document.getElementById('wave-forms').appendChild(element);
         var nextAlternationId = 0;
-        var addAlternationForm = function() {
+        var addAlternationForm = function(nextElement) {
             var alternationId = nextAlternationId;
             nextAlternationId++;
             var clone = document.getElementById('wave-alternation-template-' + id).cloneNode(true);
             clone.innerHTML = clone.innerHTML.replace(/\:template\-alternation\-id\:/g, alternationId);
             var element = firstChildElement(clone);
-            document.getElementById('wave-alternations-' + id).appendChild(element);
+            var parent = document.getElementById('wave-alternations-' + id);
+            if (nextElement) {
+                parent.insertBefore(element, nextElement);
+            } else {
+                parent.appendChild(element);
+            }
+            document.getElementById('wave-insert-alternation-' + id + '-' + alternationId).onclick = function(event) {
+                addAlternationForm(element);
+            };
             document.getElementById('delete-wave-alternation-' + id + '-' + alternationId).onclick = function(event) {
                 removeNode(element);
             };

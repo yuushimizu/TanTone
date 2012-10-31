@@ -76,6 +76,10 @@
         border-top: solid 0.7em #235;
       }
 
+      .wave-header {
+        text-align: right;
+      }
+
       .wave-footer {
         text-align: right;
       }
@@ -101,6 +105,10 @@
         background-color: #fff;
       }
 
+      .wave-alternation-header {
+        margin-bottom: 1em;
+      }
+
       .wave-alternation-footer {
         text-align: right;
         margin-top: 1em;
@@ -124,9 +132,14 @@
       <div class="section">
         <div class="template" id="wave-template">
           <div class="wave-form" id="wave-:template-wave-id:">
-            <p><a href="javascript:void(0)" id="wave-add-alternation-:template-wave-id:">変化点を追加</a></p>
+            <div class="wave-header">
+              <p><a href="javascript:void(0)" id="wave-add-alternation-:template-wave-id:">一番右に変化点を追加 ＞＞</a></p>
+            </div>
             <div class="template" id="wave-alternation-template-:template-wave-id:">
               <div class="wave-alternation-form" id="wave-alternation-:template-wave-id:-:template-alternation-id:">
+                <div class="wave-alternation-header">
+                  <p><a href="javascript:void(0)" id="wave-insert-alternation-:template-wave-id:-:template-alternation-id:">＜＜ 左側に変化点を挿入</a></p>
+                </div>
                 <p><span class="form-field-label">有効</span><span><input type="checkbox" id="wave-enabled-:template-wave-id:-:template-alternation-id:" checked="checked"></span></p>
                 <p><span class="form-field-label">開始</span><span><input type="text" value="0" id="wave-start-field-:template-wave-id:-:template-alternation-id:">ミリ秒</span></p>
                 <p>
