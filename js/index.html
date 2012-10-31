@@ -13,8 +13,8 @@
         padding-bottom: 3em;
       }
 
-      p {
-        margin-top: 0.5em;
+      a {
+        color: #169;
       }
 
       h1 {
@@ -23,7 +23,6 @@
         color: #eef;
         padding-left: 0.5em;
         margin-bottom: 0.5em;
-        clear: both;
       }
 
       h2 {
@@ -33,7 +32,6 @@
         padding-left: 0.5em;
         margin-bottom: 0.5em;
         margin-top: 1em;
-        clear: both;
       }
 
       h3 {
@@ -55,25 +53,66 @@
       .submit {
         background-color: #f53;
         color: #fef;
-        font-size: 0.8em;
-        padding-left: 2em;
-        padding-right: 2em;
+        font-size: 1em;
+        padding-left: 3em;
+        padding-right: 3em;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+      }
+      
+      #wave-link {
+        margin-left: 1em;
+        font-size: 1em;
       }
 
       #wave-base64 {
         width: 100%;
       }
 
-      .wave-section-form {
-        width: 25%;
-        margin-left: 1em;
-        float: left;
-        margin-bottom: 2em;
+      .wave-form {
+        background-color: #eef;
+        padding: 1em;
+        border: solid 1px #235;
+        border-top: solid 0.7em #235;
+      }
+
+      .wave-footer {
+        text-align: right;
+      }
+
+      #wave-forms {
+        margin-bottom: 1em;
+      }
+
+      .wave-alternation-forms {
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      .wave-alternation-form {
+        width: 20em;
+        display: inline-block;
+        margin-right: 1em;
+        margin-top: 1em;
+        margin-bottom: 1em;
+        padding: 1em;
+        border: solid 1px #346;
+        border-top: solid 0.7em #346;
+        background-color: #fff;
+      }
+
+      .wave-alternation-footer {
+        text-align: right;
+        margin-top: 1em;
+      }
+
+      .template {
+        display: none;
       }
     </style>
   </head>
   <body>
-    <form id="wave-form">
+    <form id="form">
       <h1>出力設定</h1>
       <div class="section">
         <p><span class="form-field-label">サンプリングレート</span><span><input type="text" value="44100" id="samples-per-second-field">Hz</span></p>
@@ -83,154 +122,49 @@
       </div>
       <h1>波形設定</h1>
       <div class="section">
-        <h2>波形1</h2>
-        <div class="wave-section-form">
-          <h3>区間1</h3>
-          <p><span class="form-field-label">有効</span><span><input type="checkbox" id="wave-enabled-0-0" checked="checked"></span></p>
-          <p><span class="form-field-label">開始</span><span><input type="text" value="0" id="wave-start-field-0-0">ミリ秒</span></p>
-          <p>
-            <span class="form-field-label">種類</span>
-            <span>
-              <input type="radio" value="sin" name="wave-type-0-0" id="wave-type-sin-0-0" checked="checked"><label for="wave-type-sin-0-0">正弦波</label>
-              <input type="radio" value="rect" name="wave-type-0-0" id="wave-type-rect-0-0"><label for="wave-type-rect-0-0">矩形波</label>
-              <input type="radio" value="saw" name="wave-type-0-0" id="wave-type-saw-0-0"><label for="wave-type-saw-0-0">のこぎり波</label>
-            </span>
-          </p>
-          <p><span class="form-field-label">周波数</span><span><input type="text" value="440" id="wave-rate-field-0-0">Hz</span></p>
-          <p><span class="form-field-label">音量</span><span><input type="text" value="50" id="wave-volume-field-0-0">%</span></p>
+        <div class="template" id="wave-template">
+          <div class="wave-form" id="wave-:template-wave-id:">
+            <p><a href="javascript:void(0)" id="wave-add-alternation-:template-wave-id:">変化点を追加</a></p>
+            <div class="template" id="wave-alternation-template-:template-wave-id:">
+              <div class="wave-alternation-form" id="wave-alternation-:template-wave-id:-:template-alternation-id:">
+                <p><span class="form-field-label">有効</span><span><input type="checkbox" id="wave-enabled-:template-wave-id:-:template-alternation-id:" checked="checked"></span></p>
+                <p><span class="form-field-label">開始</span><span><input type="text" value="0" id="wave-start-field-:template-wave-id:-:template-alternation-id:">ミリ秒</span></p>
+                <p>
+                  <span class="form-field-label">種類</span>
+                  <span>
+                    <input type="radio" value="sin" name="wave-type-:template-wave-id:-:template-alternation-id:" id="wave-type-sin-:template-wave-id:-:template-alternation-id:" checked="checked"><label for="wave-type-sin-:template-wave-id:-:template-alternation-id:">正弦波</label>
+                    <input type="radio" value="rect" name="wave-type-:template-wave-id:-:template-alternation-id:" id="wave-type-rect-:template-wave-id:-:template-alternation-id:"><label for="wave-type-rect-:template-wave-id:-:template-alternation-id:">矩形波</label>
+                    <input type="radio" value="saw" name="wave-type-:template-wave-id:-:template-alternation-id:" id="wave-type-saw-:template-wave-id:-:template-alternation-id:"><label for="wave-type-saw-:template-wave-id:-:template-alternation-id:">のこぎり波</label>
+                  </span>
+                </p>
+                <p><span class="form-field-label">周波数</span><span><input type="text" value="440" id="wave-rate-field-:template-wave-id:-:template-alternation-id:">Hz</span></p>
+                <p><span class="form-field-label">音量</span><span><input type="text" value="50" id="wave-volume-field-:template-wave-id:-:template-alternation-id:">%</span></p>
+                <div class="wave-alternation-footer">
+                  <p><a href="javascript:void(0)" id="delete-wave-alternation-:template-wave-id:-:template-alternation-id:">削除</a></p>
+                </div>
+              </div>
+            </div>
+            <div class="wave-alternation-forms" id="wave-alternations-:template-wave-id:">
+            </div>
+            <div class="wave-footer">
+              <p><a href="javascript:void(0)" id="delete-wave-:template-wave-id:">削除</a></p>
+            </div>
+          </div>
         </div>
-        <div class="wave-section-form">
-          <h3>区間2</h3>
-          <p><span class="form-field-label">有効</span><span><input type="checkbox" id="wave-enabled-0-1"></span></p>
-          <p><span class="form-field-label">開始</span><span><input type="text" value="0" id="wave-start-field-0-1">ミリ秒</span></p>
-          <p>
-            <span class="form-field-label">種類</span>
-            <span>
-              <input type="radio" value="sin" name="wave-type-0-1" id="wave-type-sin-0-1" checked="checked"><label for="wave-type-sin-0-1">正弦波</label>
-              <input type="radio" value="rect" name="wave-type-0-1" id="wave-type-rect-0-1"><label for="wave-type-rect-0-1">矩形波</label>
-              <input type="radio" value="saw" name="wave-type-0-1" id="wave-type-saw-0-1"><label for="wave-type-saw-0-1">のこぎり波</label>
-            </span>
-          </p>
-          <p><span class="form-field-label">周波数</span><span><input type="text" value="440" id="wave-rate-field-0-1">Hz</span></p>
-          <p><span class="form-field-label">音量</span><span><input type="text" value="50" id="wave-volume-field-0-1">%</span></p>
+        <div id="wave-forms">
         </div>
-        <div class="wave-section-form">
-          <h3>区間3</h3>
-          <p><span class="form-field-label">有効</span><span><input type="checkbox" id="wave-enabled-0-2"></span></p>
-          <p><span class="form-field-label">開始</span><span><input type="text" value="1000" id="wave-start-field-0-2">ミリ秒</span></p>
-          <p>
-            <span class="form-field-label">種類</span>
-            <span>
-              <input type="radio" value="sin" name="wave-type-0-2" id="wave-type-sin-0-2" checked="checked"><label for="wave-type-sin-0-2">正弦波</label>
-              <input type="radio" value="rect" name="wave-type-0-2" id="wave-type-rect-0-2"><label for="wave-type-rect-0-2">矩形波</label>
-              <input type="radio" value="saw" name="wave-type-0-2" id="wave-type-saw-0-2"><label for="wave-type-saw-0-2">のこぎり波</label>
-            </span>
-          </p>
-          <p><span class="form-field-label">周波数</span><span><input type="text" value="440" id="wave-rate-field-0-2">Hz</span></p>
-          <p><span class="form-field-label">音量</span><span><input type="text" value="50" id="wave-volume-field-0-2">%</span></p>
-        </div>
-        <h2>波形2</h2>
-        <div class="wave-section-form">
-          <h3>区間1</h3>
-          <p><span class="form-field-label">有効</span><span><input type="checkbox" id="wave-enabled-1-0"></span></p>
-          <p><span class="form-field-label">開始</span><span><input type="text" value="0" id="wave-start-field-1-0">ミリ秒</span></p>
-          <p>
-            <span class="form-field-label">種類</span>
-            <span>
-              <input type="radio" value="sin" name="wave-type-1-0" id="wave-type-sin-1-0" checked="checked"><label for="wave-type-sin-1-0">正弦波</label>
-              <input type="radio" value="rect" name="wave-type-1-0" id="wave-type-rect-1-0"><label for="wave-type-rect-1-0">矩形波</label>
-              <input type="radio" value="saw" name="wave-type-1-0" id="wave-type-saw-1-0"><label for="wave-type-saw-1-0">のこぎり波</label>
-            </span>
-          </p>
-          <p><span class="form-field-label">周波数</span><span><input type="text" value="440" id="wave-rate-field-1-0">Hz</span></p>
-          <p><span class="form-field-label">音量</span><span><input type="text" value="0" id="wave-volume-field-1-0">%</span></p>
-        </div>
-        <div class="wave-section-form">
-          <h3>区間2</h3>
-          <p><span class="form-field-label">有効</span><span><input type="checkbox" id="wave-enabled-1-1"></span></p>
-          <p><span class="form-field-label">開始</span><span><input type="text" value="0" id="wave-start-field-1-1">ミリ秒</span></p>
-          <p>
-            <span class="form-field-label">種類</span>
-            <span>
-              <input type="radio" value="sin" name="wave-type-1-1" id="wave-type-sin-1-1" checked="checked"><label for="wave-type-sin-1-1">正弦波</label>
-              <input type="radio" value="rect" name="wave-type-1-1" id="wave-type-rect-1-1"><label for="wave-type-rect-1-1">矩形波</label>
-              <input type="radio" value="saw" name="wave-type-1-1" id="wave-type-saw-1-1"><label for="wave-type-saw-1-1">のこぎり波</label>
-            </span>
-          </p>
-          <p><span class="form-field-label">周波数</span><span><input type="text" value="440" id="wave-rate-field-1-1">Hz</span></p>
-          <p><span class="form-field-label">音量</span><span><input type="text" value="0" id="wave-volume-field-1-1">%</span></p>
-        </div>
-        <div class="wave-section-form">
-          <h3>区間3</h3>
-          <p><span class="form-field-label">有効</span><span><input type="checkbox" id="wave-enabled-1-2"></span></p>
-          <p><span class="form-field-label">開始</span><span><input type="text" value="1000" id="wave-start-field-1-2">ミリ秒</span></p>
-          <p>
-            <span class="form-field-label">種類</span>
-            <span>
-              <input type="radio" value="sin" name="wave-type-1-2" id="wave-type-sin-1-2" checked="checked"><label for="wave-type-sin-1-2">正弦波</label>
-              <input type="radio" value="rect" name="wave-type-1-2" id="wave-type-rect-1-2"><label for="wave-type-rect-1-2">矩形波</label>
-              <input type="radio" value="saw" name="wave-type-1-2" id="wave-type-saw-1-2"><label for="wave-type-saw-1-2">のこぎり波</label>
-            </span>
-          </p>
-          <p><span class="form-field-label">周波数</span><span><input type="text" value="440" id="wave-rate-field-1-2">Hz</span></p>
-          <p><span class="form-field-label">音量</span><span><input type="text" value="0" id="wave-volume-field-1-2">%</span></p>
-        </div>
-        <h2>波形3</h2>
-        <div class="wave-section-form">
-          <h3>区間1</h3>
-          <p><span class="form-field-label">有効</span><span><input type="checkbox" id="wave-enabled-2-0"></span></p>
-          <p><span class="form-field-label">開始</span><span><input type="text" value="0" id="wave-start-field-2-0">ミリ秒</span></p>
-          <p>
-            <span class="form-field-label">種類</span>
-            <span>
-              <input type="radio" value="sin" name="wave-type-2-0" id="wave-type-sin-2-0" checked="checked"><label for="wave-type-sin-2-0">正弦波</label>
-              <input type="radio" value="rect" name="wave-type-2-0" id="wave-type-rect-2-0"><label for="wave-type-rect-2-0">矩形波</label>
-              <input type="radio" value="saw" name="wave-type-2-0" id="wave-type-saw-2-0"><label for="wave-type-saw-2-0">のこぎり波</label>
-            </span>
-          </p>
-          <p><span class="form-field-label">周波数</span><span><input type="text" value="440" id="wave-rate-field-2-0">Hz</span></p>
-          <p><span class="form-field-label">音量</span><span><input type="text" value="0" id="wave-volume-field-2-0">%</span></p>
-        </div>
-        <div class="wave-section-form">
-          <h3>区間2</h3>
-          <p><span class="form-field-label">有効</span><span><input type="checkbox" id="wave-enabled-2-1"></span></p>
-          <p><span class="form-field-label">開始</span><span><input type="text" value="0" id="wave-start-field-2-1">ミリ秒</span></p>
-          <p>
-            <span class="form-field-label">種類</span>
-            <span>
-              <input type="radio" value="sin" name="wave-type-2-1" id="wave-type-sin-2-1" checked="checked"><label for="wave-type-sin-2-1">正弦波</label>
-              <input type="radio" value="rect" name="wave-type-2-1" id="wave-type-rect-2-1"><label for="wave-type-rect-2-1">矩形波</label>
-              <input type="radio" value="saw" name="wave-type-2-1" id="wave-type-saw-2-1"><label for="wave-type-saw-2-1">のこぎり波</label>
-            </span>
-          </p>
-          <p><span class="form-field-label">周波数</span><span><input type="text" value="440" id="wave-rate-field-2-1">Hz</span></p>
-          <p><span class="form-field-label">音量</span><span><input type="text" value="0" id="wave-volume-field-2-1">%</span></p>
-        </div>
-        <div class="wave-section-form">
-          <h3>区間3</h3>
-          <p><span class="form-field-label">有効</span><span><input type="checkbox" id="wave-enabled-2-2"></span></p>
-          <p><span class="form-field-label">開始</span><span><input type="text" value="1000" id="wave-start-field-2-2">ミリ秒</span></p>
-          <p>
-            <span class="form-field-label">種類</span>
-            <span>
-              <input type="radio" value="sin" name="wave-type-2-2" id="wave-type-sin-2-2" checked="checked"><label for="wave-type-sin-2-2">正弦波</label>
-              <input type="radio" value="rect" name="wave-type-2-2" id="wave-type-rect-2-2"><label for="wave-type-rect-2-2">矩形波</label>
-              <input type="radio" value="saw" name="wave-type-2-2" id="wave-type-saw-2-2"><label for="wave-type-saw-2-2">のこぎり波</label>
-            </span>
-          </p>
-          <p><span class="form-field-label">周波数</span><span><input type="text" value="440" id="wave-rate-field-2-2">Hz</span></p>
-          <p><span class="form-field-label">音量</span><span><input type="text" value="0" id="wave-volume-field-2-2">%</span></p>
-        </div>
+        <p><a href="javascript:void(0)" id="add-wave-form">波形を追加</a></p>
       </div>
       <h1>結果</h1>
       <div class="section">
-        <p><input type="submit" value="作成" class="submit"></p>
+        <p>
+          <input type="submit" value="作成" class="submit">
+          <a href="javascript:void(0)" target="_blank" id="wave-link">WAVEファイル</a>
+        </p>
         <h2>音</h2>
         <p><audio controls="controls" id="audio"></audio></p>
         <h2>先頭100ミリ秒間の波形</h2>
         <p><canvas width="960" height="240" id="wave-canvas"></canvas></p>
-        <h2>リンク</h2>
-        <p><a href="javascript:void(0)" target="_blank" id="wave-link">ダウンロード</a></p>
       </div>
     </form>
     <script type="text/javascript" src="./web_wave.js"></script>

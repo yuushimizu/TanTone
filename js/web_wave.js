@@ -19,6 +19,25 @@
         for (var i = 0; i < paddingLength; ++i) encoded += '=';
         return encoded;
     };
+    var childElements = function(element) {
+        var result = [];
+        for (var i = 0; i < element.childNodes.length; ++i) {
+            var childNode = element.childNodes[i];
+            if (childNode instanceof Element) result.push(childNode);
+        }
+        return result;
+    };
+    var firstChildElement = function(element) {
+        for (var i = 0; i < element.childNodes.length; ++i) {
+            var childNode = element.childNodes[i];
+            if (childNode instanceof Element) return childNode;
+        }
+        return null;
+    };
+    var removeChild = (document.body.removeNode) ? function(parent, node) {node.removeNode(true)} : function(parent, node) {parent.removeChild(node)};
+    var removeNode = function(node) {
+        removeChild(node.parentNode, node);
+    };
     var readOutputSettings = function() {
         var samplesPerSecond = parseInt(document.getElementById('samples-per-second-field').value);
         var channels = parseInt(document.getElementById('channels-field').value);
@@ -35,6 +54,34 @@
             maxValue: Math.pow(255, bytesPerSample) / 2
         };
     };
+    var nextWaveId = 0;
+    var addWaveForm = function() {
+        var id = nextWaveId;
+        nextWaveId++;
+        var clone = document.getElementById('wave-template').cloneNode(true);
+        clone.innerHTML = clone.innerHTML.replace(/\:template\-wave\-id\:/g, id);
+        var element = firstChildElement(clone);
+        document.getElementById('wave-forms').appendChild(element);
+        var nextAlternationId = 0;
+        var addAlternationForm = function() {
+            var alternationId = nextAlternationId;
+            nextAlternationId++;
+            var clone = document.getElementById('wave-alternation-template-' + id).cloneNode(true);
+            clone.innerHTML = clone.innerHTML.replace(/\:template\-alternation\-id\:/g, alternationId);
+            var element = firstChildElement(clone);
+            document.getElementById('wave-alternations-' + id).appendChild(element);
+            document.getElementById('delete-wave-alternation-' + id + '-' + alternationId).onclick = function(event) {
+                removeNode(element);
+            };
+        }
+        document.getElementById('wave-add-alternation-' + id).onclick = function(event) {
+            addAlternationForm();
+        };
+        document.getElementById('delete-wave-' + id).onclick = function(event) {
+            removeNode(element);
+        };
+        addAlternationForm();
+    };
     var waveFunctions = {
         'sin': function(timeRate) {
             return Math.sin(timeRate * Math.PI * 2);
@@ -46,37 +93,39 @@
             return timeRate * 2 - 1;
         }
     };
-    var readWaveType = function(waveIndex, sectionIndex) {
-        for (var type in waveFunctions) if (document.getElementById('wave-type-' + type + '-' + waveIndex + '-' + sectionIndex).checked) return type;
+    var readWaveType = function(waveId, alternationId) {
+        for (var type in waveFunctions) if (document.getElementById('wave-type-' + type + '-' + waveId + '-' + alternationId).checked) return type;
         return null;
     };
-    var readWaveSectionSettings = function(waveIndex, sectionIndex) {
-        if (!document.getElementById('wave-enabled-' + waveIndex + '-' + sectionIndex).checked) return null;
-        var type = readWaveType(waveIndex, sectionIndex);
+    var readWaveAlternationSettings = function(waveId, alternationId) {
+        if (!document.getElementById('wave-enabled-' + waveId + '-' + alternationId).checked) return null;
+        var type = readWaveType(waveId, alternationId);
         return {
             type: type,
             waveFunction: waveFunctions[type],
-            start: parseInt(document.getElementById('wave-start-field-' + waveIndex + '-' + sectionIndex).value),
-            rate: parseInt(document.getElementById('wave-rate-field-' + waveIndex + '-' + sectionIndex).value),
-            volume: parseInt(document.getElementById('wave-volume-field-' + waveIndex + '-' + sectionIndex).value)
+            start: parseInt(document.getElementById('wave-start-field-' + waveId + '-' + alternationId).value),
+            rate: parseInt(document.getElementById('wave-rate-field-' + waveId + '-' + alternationId).value),
+            volume: parseInt(document.getElementById('wave-volume-field-' + waveId + '-' + alternationId).value)
         };
     };
-    var readWaveSettings = function(waveIndex) {
-        var waveSectionCount = 3;
-        var sectionsSettings = [];
-        for (var sectionIndex = 0; sectionIndex < waveSectionCount; ++sectionIndex) {
-            var sectionSettings = readWaveSectionSettings(waveIndex, sectionIndex);
-            if (sectionSettings) sectionsSettings.push(sectionSettings);
+    var readWaveSettings = function(waveId) {
+        var waveAlternationForms = childElements(document.getElementById('wave-alternations-' + waveId));
+        var alternationsSettings = [];
+        for (var i = 0; i < waveAlternationForms.length; ++i) {
+            var alternationId = waveAlternationForms[i].id.match(/\-([^\-]+)$/)[1];
+            var alternationSettings = readWaveAlternationSettings(waveId, alternationId);
+            if (alternationSettings) alternationsSettings.push(alternationSettings);
         }
         return {
-            sectionsSettings: sectionsSettings
+            alternationsSettings: alternationsSettings
         };
     };
     var readWavesSettings = function() {
-        var waveSettingsCount = 3;
+        var waveForms = childElements(document.getElementById('wave-forms'));
         var wavesSettings = [];
-        for (var waveIndex = 0; waveIndex < waveSettingsCount; ++waveIndex) {
-            wavesSettings.push(readWaveSettings(waveIndex));
+        for (var i = 0; i < waveForms.length; ++i) {
+            var waveId = waveForms[i].id.match(/^wave-(.+)$/)[1];
+            wavesSettings.push(readWaveSettings(waveId));
         }
         return wavesSettings;
     }
@@ -102,38 +151,38 @@
     };
     var makeSingleDataValues = function(outputSettings, waveSettings) {
         var values = emptyValues(outputSettings);
-        if (waveSettings.sectionsSettings.length <= 0) return values;
+        if (waveSettings.alternationsSettings.length <= 0) return values;
         var millisecondsToSamples = function(milliseconds) {
             return Math.floor(outputSettings.samplesPerSecond * milliseconds / 1000);
         };
         var currentTimeForWaveLoop = 0;
         for (var sample = 0; sample < outputSettings.sampleCount; ++sample) {
-            var currentSectionSettings = null;
-            var nextSectionSettings = null;
-            for (var i = 0; i < waveSettings.sectionsSettings.length; ++i) {
-                if (sample >= millisecondsToSamples(waveSettings.sectionsSettings[i].start)) {
-                    currentSectionSettings = waveSettings.sectionsSettings[i];
-                    nextSectionSettings = (i + 1 < waveSettings.sectionsSettings.length) ? waveSettings.sectionsSettings[i + 1] : null;
+            var currentAlternationSettings = null;
+            var nextAlternationSettings = null;
+            for (var i = 0; i < waveSettings.alternationsSettings.length; ++i) {
+                if (sample >= millisecondsToSamples(waveSettings.alternationsSettings[i].start)) {
+                    currentAlternationSettings = waveSettings.alternationsSettings[i];
+                    nextAlternationSettings = (i + 1 < waveSettings.alternationsSettings.length) ? waveSettings.alternationsSettings[i + 1] : null;
                 }
             }
             var rate;
             var volume;
-            if (nextSectionSettings && nextSectionSettings.start > currentSectionSettings.start) {
-                var currentTimeInSection = (sample - millisecondsToSamples(currentSectionSettings.start)) / millisecondsToSamples(nextSectionSettings.start);
-                rate = currentSectionSettings.rate + currentTimeInSection * (nextSectionSettings.rate - currentSectionSettings.rate);
-                volume = currentSectionSettings.volume + currentTimeInSection * (nextSectionSettings.volume - currentSectionSettings.volume);
+            if (nextAlternationSettings && nextAlternationSettings.start > currentAlternationSettings.start) {
+                var currentTimeInAlternation = (sample - millisecondsToSamples(currentAlternationSettings.start)) / millisecondsToSamples(nextAlternationSettings.start);
+                rate = currentAlternationSettings.rate + currentTimeInAlternation * (nextAlternationSettings.rate - currentAlternationSettings.rate);
+                volume = currentAlternationSettings.volume + currentTimeInAlternation * (nextAlternationSettings.volume - currentAlternationSettings.volume);
             } else {
-                rate = currentSectionSettings.rate;
-                volume = currentSectionSettings.volume;
+                rate = currentAlternationSettings.rate;
+                volume = currentAlternationSettings.volume;
             }
-                if (sample % 100 == 0) console.log(rate);
             var value;
-            if (!currentSectionSettings) {
+            if (!currentAlternationSettings) {
                 value = 0;
             } else {
                 var currentTimeForWave = sample / (outputSettings.samplesPerSecond / rate);
-                value = currentSectionSettings.waveFunction(currentTimeForWaveLoop) * (outputSettings.maxValue * volume / 100);
-                currentTimeForWaveLoop += rate / outputSettings.samplesPerSecond;
+                value = currentAlternationSettings.waveFunction(currentTimeForWaveLoop) * (outputSettings.maxValue * volume / 100);
+                currentTimeForWaveLoop += + rate / outputSettings.samplesPerSecond;
+                currentTimeForWaveLoop -= Math.floor(currentTimeForWaveLoop);
             }
             for (var channel = 0; channel < outputSettings.channels; ++channel) {
                 values[channel][sample] = value;
@@ -229,10 +278,15 @@
         drawWave(outputSettings, dataValues);
         document.getElementById('wave-link').href = base64;
     };
-    document.getElementById('wave-form').onsubmit = function(event) {
+    document.getElementById('add-wave-form').onclick = function(event) {
+        addWaveForm();
+        return false;
+    };
+    document.getElementById('form').onsubmit = function(event) {
         event.preventDefault();
         makeWave();
         return false;
     };
+    addWaveForm();
     resetCanvas();
 })();
