@@ -46,19 +46,27 @@
             return timeRate * 2 - 1;
         }
     };
-    var readWaveType = function() {
-        for (var type in waveFunctions) if (document.getElementById('wave-type-' + type).checked) return type;
+    var readWaveType = function(number) {
+        for (var type in waveFunctions) if (document.getElementById('wave-type-' + type + '-' + number).checked) return type;
         return null;
     };
-    var readWaveSettings = function() {
-        var type = readWaveType();
+    var readWaveSettings = function(number) {
+        var type = readWaveType(number);
         return {
             type: type,
             waveFunction: waveFunctions[type],
-            rate: document.getElementById('wave-rate-field').value || 440,
-            volume: document.getElementById('wave-volume-field').value || 50
+            rate: document.getElementById('wave-rate-field-' + number).value || 440,
+            volume: document.getElementById('wave-volume-field-' + number).value || 50
         };
     };
+    var readWavesSettings = function() {
+        var waveSettingsCount = 3;
+        var wavesSettings = [];
+        for (var number = 0; number < waveSettingsCount; ++number) {
+            wavesSettings.push(readWaveSettings(number));
+        }
+        return wavesSettings;
+    }
     var bytesFromInt = function(value, bytes) {
         if (value == undefined || bytes == undefined || isNaN(value) || value == Infinity) throw 'Invalid value: ' + value + ' or bytes: ' + bytes;
         var intValue = Math.floor(value);
@@ -69,9 +77,18 @@
         }
         return result;
     };
-    var makeDataValues = function(outputSettings, waveSettings) {
+    var emptyValues = function(outputSettings) {
         var values = [];
-        for (var channel = 0; channel < outputSettings.channels; ++channel) values[channel] = [];
+        for (var channel = 0; channel < outputSettings.channels; ++channel) {
+            values[channel] = [];
+            for (var sample = 0; sample < outputSettings.sampleCount; ++sample) {
+                values[channel][sample] = 0;
+            }
+        }
+        return values;
+    };
+    var makeSingleDataValues = function(outputSettings, waveSettings) {
+        var values = emptyValues(outputSettings);
         for (var sample = 0; sample < outputSettings.sampleCount; ++sample) {
             var currentTimeForWave = sample / (outputSettings.samplesPerSecond / waveSettings.rate);
             var value = waveSettings.waveFunction(currentTimeForWave - Math.floor(currentTimeForWave)) * (outputSettings.maxValue * waveSettings.volume / 100);
@@ -80,6 +97,19 @@
             }
         }
         return values;
+    };
+    var makeDataValues = function(outputSettings, wavesSettings) {
+        var mergedValues = emptyValues(outputSettings);
+        for (var i = 0; i < wavesSettings.length; ++i) {
+            var values = makeSingleDataValues(outputSettings, wavesSettings[i]);
+            for (var channel = 0; channel < values.length; ++values) {
+                var samples = values[channel].length;
+                for (var sample = 0; sample < samples; ++sample) {
+                    mergedValues[channel][sample] += values[channel][sample];
+                }
+            }
+        }
+        return mergedValues;
     };
     var makeDataBytes = function(outputSettings, values) {
         var bytes = '';
@@ -148,8 +178,8 @@
     };
     var makeWave = function() {
         var outputSettings = readOutputSettings();
-        var waveSettings = readWaveSettings();
-        var dataValues = makeDataValues(outputSettings, waveSettings);
+        var wavesSettings = readWavesSettings();
+        var dataValues = makeDataValues(outputSettings, wavesSettings);
         var bytes = makeWaveBytes(outputSettings, dataValues);
         var base64 = 'data:audio/wav;base64,' + base64Encode(bytes);
         document.getElementById('audio').src = base64;
