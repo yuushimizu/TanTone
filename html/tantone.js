@@ -101,6 +101,11 @@
             return ((timeRate + 0.5) % 1 * 2) - 1;
         }
     };
+    var reverseWaveFunction = function(f) {
+        return function(timeRate) {
+            return f(1 - timeRate);
+        };
+    };
     var waveAlternationMethods = {
         'average': function(valueForCurrent, valueForNext, timeForAlternation) {
             return valueForCurrent * (1 - timeForAlternation) + valueForNext * timeForAlternation;
@@ -112,9 +117,11 @@
     var readWaveAlternationSettings = function(waveId, alternationId) {
         if (!document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-enabled').checked) return null;
         var type = document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-type').value;
+        var reversed = document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-reversed').checked;
         return {
             type: type,
-            waveFunction: waveFunctions[type],
+            reversed: reversed,
+            waveFunction: reversed ? reverseWaveFunction(waveFunctions[type]) : waveFunctions[type],
             alternationMethod: waveAlternationMethods[document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-method').value],
             start: parseInt(document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-start').value),
             rate: parseInt(document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-rate').value),
