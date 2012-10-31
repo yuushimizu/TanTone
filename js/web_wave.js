@@ -151,10 +151,10 @@
         var waveSettings = readWaveSettings();
         var dataValues = makeDataValues(outputSettings, waveSettings);
         var bytes = makeWaveBytes(outputSettings, dataValues);
-        var base64 = base64Encode(bytes);
-        document.getElementById('audio').src = 'data:audio/wav;base64,' + base64;
+        var base64 = 'data:audio/wav;base64,' + base64Encode(bytes);
+        document.getElementById('audio').src = base64;
         drawWave(outputSettings, dataValues);
-        document.getElementById('wave-base64').value = base64;
+        document.getElementById('wave-link').href = base64;
     };
     document.getElementById('wave-form').onsubmit = function(event) {
         event.preventDefault();
