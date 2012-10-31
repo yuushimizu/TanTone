@@ -20,10 +20,10 @@
         return encoded;
     };
     var readOutputSettings = function() {
-        var samplesPerSecond = document.getElementById('samples-per-second-field').value;
-        var channels = document.getElementById('channels-field').value;
-        var bytesPerSample = document.getElementById('bytes-per-sample-field').value;
-        var length = document.getElementById('length-field').value;
+        var samplesPerSecond = parseInt(document.getElementById('samples-per-second-field').value);
+        var channels = parseInt(document.getElementById('channels-field').value);
+        var bytesPerSample = parseInt(document.getElementById('bytes-per-sample-field').value);
+        var length = parseInt(document.getElementById('length-field').value);
         var sampleCount = Math.floor(samplesPerSecond * length / 1000);
         return {
             samplesPerSecond: samplesPerSecond,
@@ -46,26 +46,37 @@
             return timeRate * 2 - 1;
         }
     };
-    var readWaveType = function(number) {
-        for (var type in waveFunctions) if (document.getElementById('wave-type-' + type + '-' + number).checked) return type;
+    var readWaveType = function(waveIndex, sectionIndex) {
+        for (var type in waveFunctions) if (document.getElementById('wave-type-' + type + '-' + waveIndex + '-' + sectionIndex).checked) return type;
         return null;
     };
-    var readWaveSettings = function(number) {
-        var type = readWaveType(number);
+    var readWaveSectionSettings = function(waveIndex, sectionIndex) {
+        if (!document.getElementById('wave-enabled-' + waveIndex + '-' + sectionIndex).checked) return null;
+        var type = readWaveType(waveIndex, sectionIndex);
         return {
             type: type,
             waveFunction: waveFunctions[type],
-            start: document.getElementById('wave-start-field-' + number).value,
-            length: document.getElementById('wave-length-field-' + number).value,
-            rate: document.getElementById('wave-rate-field-' + number).value,
-            volume: document.getElementById('wave-volume-field-' + number).value
+            start: parseInt(document.getElementById('wave-start-field-' + waveIndex + '-' + sectionIndex).value),
+            rate: parseInt(document.getElementById('wave-rate-field-' + waveIndex + '-' + sectionIndex).value),
+            volume: parseInt(document.getElementById('wave-volume-field-' + waveIndex + '-' + sectionIndex).value)
+        };
+    };
+    var readWaveSettings = function(waveIndex) {
+        var waveSectionCount = 3;
+        var sectionsSettings = [];
+        for (var sectionIndex = 0; sectionIndex < waveSectionCount; ++sectionIndex) {
+            var sectionSettings = readWaveSectionSettings(waveIndex, sectionIndex);
+            if (sectionSettings) sectionsSettings.push(sectionSettings);
+        }
+        return {
+            sectionsSettings: sectionsSettings
         };
     };
     var readWavesSettings = function() {
         var waveSettingsCount = 3;
         var wavesSettings = [];
-        for (var number = 0; number < waveSettingsCount; ++number) {
-            wavesSettings.push(readWaveSettings(number));
+        for (var waveIndex = 0; waveIndex < waveSettingsCount; ++waveIndex) {
+            wavesSettings.push(readWaveSettings(waveIndex));
         }
         return wavesSettings;
     }
@@ -91,15 +102,38 @@
     };
     var makeSingleDataValues = function(outputSettings, waveSettings) {
         var values = emptyValues(outputSettings);
-        var startSampleIndex = Math.floor(outputSettings.samplesPerSecond * waveSettings.start / 1000);
-        var length = Math.floor(outputSettings.samplesPerSecond * waveSettings.length / 1000);
+        if (waveSettings.sectionsSettings.length <= 0) return values;
+        var millisecondsToSamples = function(milliseconds) {
+            return Math.floor(outputSettings.samplesPerSecond * milliseconds / 1000);
+        };
+        var currentTimeForWaveLoop = 0;
         for (var sample = 0; sample < outputSettings.sampleCount; ++sample) {
-            var value;
-            if (sample >= startSampleIndex && sample < startSampleIndex + length) {
-                var currentTimeForWave = sample / (outputSettings.samplesPerSecond / waveSettings.rate);
-                value = waveSettings.waveFunction(currentTimeForWave - Math.floor(currentTimeForWave)) * (outputSettings.maxValue * waveSettings.volume / 100);
+            var currentSectionSettings = null;
+            var nextSectionSettings = null;
+            for (var i = 0; i < waveSettings.sectionsSettings.length; ++i) {
+                if (sample >= millisecondsToSamples(waveSettings.sectionsSettings[i].start)) {
+                    currentSectionSettings = waveSettings.sectionsSettings[i];
+                    nextSectionSettings = (i + 1 < waveSettings.sectionsSettings.length) ? waveSettings.sectionsSettings[i + 1] : null;
+                }
+            }
+            var rate;
+            var volume;
+            if (nextSectionSettings && nextSectionSettings.start > currentSectionSettings.start) {
+                var currentTimeInSection = (sample - millisecondsToSamples(currentSectionSettings.start)) / millisecondsToSamples(nextSectionSettings.start);
+                rate = currentSectionSettings.rate + currentTimeInSection * (nextSectionSettings.rate - currentSectionSettings.rate);
+                volume = currentSectionSettings.volume + currentTimeInSection * (nextSectionSettings.volume - currentSectionSettings.volume);
             } else {
+                rate = currentSectionSettings.rate;
+                volume = currentSectionSettings.volume;
+            }
+                if (sample % 100 == 0) console.log(rate);
+            var value;
+            if (!currentSectionSettings) {
                 value = 0;
+            } else {
+                var currentTimeForWave = sample / (outputSettings.samplesPerSecond / rate);
+                value = currentSectionSettings.waveFunction(currentTimeForWaveLoop) * (outputSettings.maxValue * volume / 100);
+                currentTimeForWaveLoop += rate / outputSettings.samplesPerSecond;
             }
             for (var channel = 0; channel < outputSettings.channels; ++channel) {
                 values[channel][sample] = value;
