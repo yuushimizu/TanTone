@@ -38,6 +38,13 @@
     var removeNode = function(node) {
         removeChild(node.parentNode, node);
     };
+    var insertToFirst = function(parent, element) {
+        if (parent.childNodes.length > 0) {
+            parent.insertBefore(element, parent.childNodes[0]);
+        } else {
+            parent.appendChild(element);
+        }
+    };
     var insertAfter = function(element, previousElement) {
         var parent = previousElement.parentNode;
         var length = parent.childNodes.length;
@@ -116,7 +123,7 @@
                 sectionElement('volume').value = previousSectionElement('volume').value;
                 sectionElement('alternation-method').value = previousSectionElement('alternation-method').value;
             } else {
-                parent.appendChild(element);
+                insertToFirst(parent, element);
             }
             sectionElement('insert').onclick = function(event) {
                 addSectionForm(element);
@@ -156,7 +163,7 @@
                 return base;
             }
         },
-        'split-tongue': function(timeRate) {
+        'snake-tongue': function(timeRate) {
             var sin = Math.sin(timeRate * Math.PI * 2);
             var reversedSin = Math.sin((1 - timeRate) * Math.PI * 2);
             return (sin * 2 + reversedSin * Math.abs(reversedSin) * 1.75) * 1.75;
