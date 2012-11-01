@@ -140,37 +140,45 @@
         };
         addSectionForm();
     };
-    var waveFunctions = {
-        'sin': function(timeRate) {
-            return Math.sin(timeRate * Math.PI * 2);
-        },
-        'rect': function(timeRate) {
-            return timeRate < 0.5 ? 1 : -1;
-        },
-        'saw': function(timeRate) {
-            return ((timeRate + 0.5) % 1 * 2) - 1;
-        },
-        'triangle': function(timeRate) {
-            return ((timeRate % 0.5 < 0.25) ? timeRate % 0.5 : (0.5 - (timeRate % 0.5))) * (timeRate < 0.5 ? 1 : -1) * 4;
-        },
-        'gear': function(timeRate) {
-            var base = Math.sin(timeRate * Math.PI * 2) * 1.5;
-            if (base > 1) {
-                return 1;
-            } else if (base < -1) {
-                return -1;
-            } else {
-                return base;
+    var waveFunctions = function() {
+        return {
+            'sin': function(timeRate) {
+                return Math.sin(timeRate * Math.PI * 2);
+            },
+            'rect': function(timeRate) {
+                return timeRate < 0.5 ? 1 : -1;
+            },
+            'saw': function(timeRate) {
+                return ((timeRate + 0.5) % 1 * 2) - 1;
+            },
+            'triangle': function(timeRate) {
+                return ((timeRate % 0.5 < 0.25) ? timeRate % 0.5 : (0.5 - (timeRate % 0.5))) * (timeRate < 0.5 ? 1 : -1) * 4;
+            },
+            'random': (function() {
+                var random = new MersenneTwister(0);
+                return function(timeRate) {
+                    return random.next() * 2 - 1;
+                }
+            })(),
+            'gear': function(timeRate) {
+                var base = Math.sin(timeRate * Math.PI * 2) * 1.5;
+                if (base > 1) {
+                    return 1;
+                } else if (base < -1) {
+                    return -1;
+                } else {
+                    return base;
+                }
+            },
+            'snake-tongue': function(timeRate) {
+                var sin = Math.sin(timeRate * Math.PI * 2);
+                var reversedSin = Math.sin((1 - timeRate) * Math.PI * 2);
+                return (sin * 2 + reversedSin * Math.abs(reversedSin) * 1.75) * 1.75;
+            },
+            'nazo': function(timeRate) {
+                return Math.random() * 2 - 1;
             }
-        },
-        'snake-tongue': function(timeRate) {
-            var sin = Math.sin(timeRate * Math.PI * 2);
-            var reversedSin = Math.sin((1 - timeRate) * Math.PI * 2);
-            return (sin * 2 + reversedSin * Math.abs(reversedSin) * 1.75) * 1.75;
-        },
-        'nazo': function(timeRate) {
-            return Math.random() * 2 - 1;
-        }
+        };
     };
     var reverseWaveFunction = function(f) {
         return function(timeRate) {
@@ -195,7 +203,7 @@
         return {
             type: type,
             reversed: reversed,
-            waveFunction: reversed ? reverseWaveFunction(waveFunctions[type]) : waveFunctions[type],
+            waveFunction: reversed ? reverseWaveFunction(waveFunctions()[type]) : waveFunctions()[type],
             alternationMethod: waveAlternationMethods[sectionElement('alternation-method').value],
             start: parseFloat(sectionElement('start').value),
             rate: parseFloat(sectionElement('rate').value),
@@ -392,7 +400,7 @@
             context.stroke();
         }
     };
-    var drawScaledWave = function(outputSettings, wave, start) {
+    var drawScaledWave = function(outputSettings, wave, middleMillisecond) {
         var canvas = document.getElementById('wave-canvas-scaled');
         var width = canvas.width;
         var height = canvas.height;
@@ -400,7 +408,7 @@
         var yCenter = height / 2;
         context.strokeStyle = 'rgba(0, 255, 0, 255)';
         context.lineWidth = 0.75;
-        var offsetSamples = start < 0 ? 0 : (outputSettings.sampleCount * Math.min(start, outputSettings.length - 100) / outputSettings.length);
+        var offsetSamples = middleMillisecond < 50 ? 0 : (outputSettings.sampleCount * Math.min(middleMillisecond - 50, outputSettings.length - 100) / outputSettings.length);
         var calcY = function(x) {
             return yCenter - yCenter * wave[0][Math.floor(offsetSamples + (outputSettings.samplesPerSecond / 10) * x / width)];
         };
