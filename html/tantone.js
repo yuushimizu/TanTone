@@ -341,7 +341,10 @@
         bytes += makeDataBytes(outputSettings, wave);
         return bytes;
     };
-    var resetContext = function(context, width, height) {
+    var resetCanvas = function(canvas) {
+        var width = canvas.width;
+        var height = canvas.height;
+        var context = canvas.getContext('2d');
         context.beginPath();
         context.fillStyle = 'rgba(0, 0, 0, 255)';
         context.fillRect(0, 0, width, height);
@@ -353,30 +356,71 @@
         context.lineTo(width, yCenter);
         context.stroke();
     };
-    var resetCanvas = function() {
+    var resetCanvases = function() {
+        resetCanvas(document.getElementById('wave-canvas'));
+        resetCanvas(document.getElementById('wave-canvas-scaled'));
+    };
+    var drawFullWave = function(outputSettings, wave) {
         var canvas = document.getElementById('wave-canvas');
         var width = canvas.width;
         var height = canvas.height;
         var context = canvas.getContext('2d');
-        resetContext(context, width, height);
+        context.strokeStyle = 'rgba(0, 255, 0, 255)';
+        context.lineWidth = 0.75;
+        context.beginPath();
+        var yCenter = height / 2;
+        for (var x = 0; x < width; ++x) {
+            var startSample = Math.floor(x * outputSettings.sampleCount / width);
+            var endSample = Math.min(Math.floor((x + 1) * outputSettings.sampleCount / width), wave[0].length);
+            var max = undefined;
+            var min = undefined;
+            for (var sample = startSample; sample < endSample; ++sample) {
+                var value = wave[0][sample];
+                if (max === undefined || max < value) max = value;
+                if (min === undefined || min > value) min = value;
+            }
+            if (max !== undefined) context.lineTo(x, yCenter - yCenter * max);
+            if (min !== undefined) context.lineTo(x, yCenter - yCenter * min);
+        }
+        context.stroke();
+        var length = outputSettings.length;
+        for (var current = 100; current < length; current += 100) {
+            context.strokeStyle = current % 500 == 0 ? 'rgba(224, 224, 224, 255)' : 'rgba(128, 128, 128, 255)';
+            context.beginPath();
+            context.moveTo(width * current / length, 0);
+            context.lineTo(width * current / length, height);
+            context.stroke();
+        }
     };
-    var drawWave = function(outputSettings, wave) {
-        var canvas = document.getElementById('wave-canvas');
+    var drawScaledWave = function(outputSettings, wave, start) {
+        var canvas = document.getElementById('wave-canvas-scaled');
         var width = canvas.width;
         var height = canvas.height;
         var context = canvas.getContext('2d');
         var yCenter = height / 2;
-        resetContext(context, width, height);
         context.strokeStyle = 'rgba(0, 255, 0, 255)';
         context.lineWidth = 0.75;
+        var offsetSamples = start < 0 ? 0 : (outputSettings.sampleCount * Math.min(start, outputSettings.length - 100) / outputSettings.length);
         var calcY = function(x) {
-            return -yCenter * wave[0][Math.floor(x * (outputSettings.samplesPerSecond / 10) / width)];
+            return yCenter - yCenter * wave[0][Math.floor(offsetSamples + (outputSettings.samplesPerSecond / 10) * x / width)];
         };
         context.beginPath();
-        for (x = 0; x < width; ++ x) {
-            context.lineTo(x, yCenter + calcY(x));
+        for (var x = 0; x < width; ++ x) {
+            context.lineTo(x, calcY(x));
         }
         context.stroke();
+    };
+    var drawWave = function(outputSettings, wave) {
+        resetCanvases();
+        drawFullWave(outputSettings, wave);
+        drawScaledWave(outputSettings, wave, 0);
+        var scaledCanvas = document.getElementById('wave-canvas-scaled');
+        var canvas = document.getElementById('wave-canvas');
+        var listener = function(event) {
+            resetCanvas(scaledCanvas);
+            drawScaledWave(outputSettings, wave, outputSettings.length * event.offsetX / canvas.width);
+        };
+        canvas.onmousemove = listener;
     };
     var makeWave = function() {
         var outputSettings = readOutputSettings();
@@ -398,5 +442,5 @@
         return false;
     };
     addWaveForm();
-    resetCanvas();
+    resetCanvases();
 })();

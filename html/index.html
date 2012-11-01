@@ -160,6 +160,10 @@
       .template {
         display: none;
       }
+
+      canvas {
+        margin-bottom: 1em;
+      }
     </style>
   </head>
   <body>
@@ -247,8 +251,9 @@
         </p>
         <h2>音</h2>
         <p><audio controls="controls" id="audio"></audio></p>
-        <h2>先頭100ミリ秒間の波形</h2>
-        <p><canvas width="960" height="240" id="wave-canvas"></canvas></p>
+        <h2>波形</h2>
+        <p><canvas width="960" height="120" id="wave-canvas"></canvas></p>
+        <p><canvas width="960" height="240" id="wave-canvas-scaled"></canvas></p>
       </div>
     </form>
     <script type="text/javascript" src="./tantone.js"></script>
