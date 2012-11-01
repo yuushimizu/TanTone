@@ -49,7 +49,7 @@
         var samplesPerSecond = parseInt(document.getElementById('output-samples-per-second').value);
         var channels = parseInt(radioValue(['output-channels-1', 'output-channels-2']));
         var bytesPerSample = parseInt(radioValue(['output-bytes-per-sample-1', 'output-bytes-per-sample-2']));
-        var length = parseInt(document.getElementById('output-length').value);
+        var length = parseFloat(document.getElementById('output-length').value);
         var sampleCount = Math.floor(samplesPerSecond * length / 1000);
         return {
             samplesPerSecond: samplesPerSecond,
@@ -152,9 +152,9 @@
             reversed: reversed,
             waveFunction: reversed ? reverseWaveFunction(waveFunctions[type]) : waveFunctions[type],
             alternationMethod: waveAlternationMethods[document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-method').value],
-            start: parseInt(document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-start').value),
-            rate: parseInt(document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-rate').value),
-            volume: parseInt(document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-volume').value)
+            start: parseFloat(document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-start').value),
+            rate: parseFloat(document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-rate').value),
+            volume: parseFloat(document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-volume').value)
         };
     };
     var readWaveSettings = function(waveId) {
