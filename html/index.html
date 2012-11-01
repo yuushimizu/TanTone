@@ -87,6 +87,11 @@
         padding-bottom: 0.5em;
       }
 
+      label {
+        margin-left: 0.2em;
+        margin-right: 1em;
+      }
+
       .output-settings .form-field-label {
         display: inline-block;
         width: 10em;
@@ -163,8 +168,20 @@
       <h1>出力設定<img class="icon" src="./images/icon-jerryfish.png"></h1>
       <div class="section output-settings">
         <p><span class="form-field-label">サンプリングレート</span><span><input type="text" class="input-text" value="44100" id="output-samples-per-second">Hz</span></p>
-        <p><span class="form-field-label">チャンネル数</span><span><input type="text" class="input-text" value="2" id="output-channels"></p>
-        <p><span class="form-field-label">サンプリングサイズ</span><span><input type="text" class="input-text" value="2" id="output-bytes-per-sample">バイト</span></p>
+        <p>
+          <span class="form-field-label">チャンネル数</span>
+          <span>
+            <input type="radio" class="input-radio" name="output-channels" value="1" id="output-channels-1"><label for="output-channels-1">モノラル</label>
+            <input type="radio" class="input-radio" name="output-channels" value="2" id="output-channels-2" checked="checked"><label for="output-channels-2">ステレオ</label>
+          </span>
+        </p>
+        <p>
+          <span class="form-field-label">サンプリングサイズ</span>
+          <span>
+            <input type="radio" class="input-radio" name="output-bytes-per-sample" value="1" id="output-bytes-per-sample-1"><label for="output-bytes-per-sample-1">8ビット</label>
+            <input type="radio" class="input-radio" name="output-bytes-per-sample" value="2" id="output-bytes-per-sample-2" checked="checked"><label for="output-bytes-per-sample-2">16ビット</label>
+          </span>
+        </p>
         <p><span class="form-field-label">長さ</span><span><input type="text" class="input-text" value="1000" id="output-length">ミリ秒</span></p>
       </div>
       <h1>波形設定<img class="icon" src="./images/icon-snake.png"></h1>
@@ -185,9 +202,13 @@
                   <span class="form-field-label">種類</span>
                   <span>
                     <select id="wave-:template-wave-id:-alternation-:template-alternation-id:-type">
-                      <option value="sin" selected="selected">正弦波</option>
-                      <option value="rect">矩形波</option>
-                      <option value="saw">のこぎり波</option>
+                      <option value="sin" selected="selected">正弦</option>
+                      <option value="rect">矩形</option>
+                      <option value="saw">のこぎり</option>
+                      <option value="triangle">三角</option>
+                      <option value="gear">歯車</option>
+                      <option value="split-tongue">割れた舌</option>
+                      <option value="nazo">謎</option>
                     </select>
                     <input type="checkbox" id="wave-:template-wave-id:-alternation-:template-alternation-id:-reversed"><label for="wave-:template-wave-id:-alternation-:template-alternation-id:-reversed">反転</label>
                   </span>

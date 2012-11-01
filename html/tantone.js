@@ -38,10 +38,17 @@
     var removeNode = function(node) {
         removeChild(node.parentNode, node);
     };
+    var radioValue = function(ids) {
+        for (var i = 0, l = ids.length; i < l; ++i) {
+            var radio = document.getElementById(ids[i]);
+            if (radio.checked) return radio.value;
+        }
+        return null;
+    };
     var readOutputSettings = function() {
         var samplesPerSecond = parseInt(document.getElementById('output-samples-per-second').value);
-        var channels = parseInt(document.getElementById('output-channels').value);
-        var bytesPerSample = parseInt(document.getElementById('output-bytes-per-sample').value);
+        var channels = parseInt(radioValue(['output-channels-1', 'output-channels-2']));
+        var bytesPerSample = parseInt(radioValue(['output-bytes-per-sample-1', 'output-bytes-per-sample-2']));
         var length = parseInt(document.getElementById('output-length').value);
         var sampleCount = Math.floor(samplesPerSecond * length / 1000);
         return {
@@ -51,8 +58,9 @@
             length: length,
             sampleCount: sampleCount,
             dataLength: sampleCount * bytesPerSample * channels,
-            maxValue: Math.pow(255, bytesPerSample) / 2
-        };
+            minValue: bytesPerSample == 1 ? 0 : -(256 * 256 / 2),
+            maxValue: bytesPerSample == 1 ? 255 : (256 * 256 / 2) - 1
+         };
     };
     var nextWaveId = 0;
     var addWaveForm = function() {
@@ -99,6 +107,27 @@
         },
         'saw': function(timeRate) {
             return ((timeRate + 0.5) % 1 * 2) - 1;
+        },
+        'triangle': function(timeRate) {
+            return ((timeRate % 0.5 < 0.25) ? timeRate % 0.5 : (0.5 - (timeRate % 0.5))) * (timeRate < 0.5 ? 1 : -1) * 4;
+        },
+        'gear': function(timeRate) {
+            var base = Math.sin(timeRate * Math.PI * 2) * 1.5;
+            if (base > 1) {
+                return 1;
+            } else if (base < -1) {
+                return -1;
+            } else {
+                return base;
+            }
+        },
+        'split-tongue': function(timeRate) {
+            var sin = Math.sin(timeRate * Math.PI * 2);
+            var reversedSin = Math.sin((1 - timeRate) * Math.PI * 2);
+            return (sin * 2 + reversedSin * Math.abs(reversedSin) * 1.75) * 1.75;
+        },
+        'nazo': function(timeRate) {
+            return Math.random() * 2 - 1;
         }
     };
     var reverseWaveFunction = function(f) {
@@ -131,7 +160,7 @@
     var readWaveSettings = function(waveId) {
         var waveAlternationForms = childElements(document.getElementById('wave-' + waveId + '-alternations'));
         var alternationsSettings = [];
-        for (var i = 0; i < waveAlternationForms.length; ++i) {
+        for (var i = 0, l = waveAlternationForms.length; i < l; ++i) {
             var alternationId = waveAlternationForms[i].id.match(/alternation\-([^\-]+)/)[1];
             var alternationSettings = readWaveAlternationSettings(waveId, alternationId);
             if (alternationSettings) alternationsSettings.push(alternationSettings);
@@ -143,7 +172,7 @@
     var readWavesSettings = function() {
         var waveForms = childElements(document.getElementById('wave-forms'));
         var wavesSettings = [];
-        for (var i = 0; i < waveForms.length; ++i) {
+        for (var i = 0, l = waveForms.length; i < l; ++i) {
             var waveId = waveForms[i].id.match(/^wave\-([^\-]+)/)[1];
             wavesSettings.push(readWaveSettings(waveId));
         }
@@ -154,12 +183,12 @@
         var intValue = Math.floor(value);
         var result = '';
         for (var i = 0; i < bytes; ++i) {
-            byte = (intValue & (0xFF << (i * 8))) >> (i * 8);
+            var byte = (intValue & (0xFF << (i * 8))) >> (i * 8);
             result += String.fromCharCode(byte);
         }
         return result;
     };
-    var emptyValues = function(outputSettings) {
+    var emptyWave = function(outputSettings) {
         var values = [];
         for (var channel = 0; channel < outputSettings.channels; ++channel) {
             values[channel] = [];
@@ -169,8 +198,8 @@
         }
         return values;
     };
-    var makeSingleDataValues = function(outputSettings, waveSettings) {
-        var values = emptyValues(outputSettings);
+    var makeSingleWave = function(outputSettings, waveSettings) {
+        var values = emptyWave(outputSettings);
         var alternationsSettings = waveSettings.alternationsSettings;
         if (alternationsSettings.length <= 0) return values;
         var millisecondsToSamples = function(milliseconds) {
@@ -194,7 +223,7 @@
                 currentStart = 0;
                 currentRate = 0;
             } else {
-                valueForCurrentAlternation = currentAlternationSettings.waveFunction(currentTimeForWaveLoop) * (outputSettings.maxValue * currentAlternationSettings.volume / 100);
+                valueForCurrentAlternation = currentAlternationSettings.waveFunction(currentTimeForWaveLoop) * currentAlternationSettings.volume / 100;
                 currentStart = currentAlternationSettings.start;
                 currentRate = currentAlternationSettings.rate;
             }
@@ -202,10 +231,10 @@
             var value;
             if (nextAlternationSettings && nextAlternationSettings.start > currentStart) {
                 var currentTimeForAlternation = (sample - millisecondsToSamples(currentStart)) / (millisecondsToSamples(nextAlternationSettings.start) - millisecondsToSamples(currentStart));
-                var valueForNextAlternation = nextAlternationSettings.waveFunction(currentTimeForWaveLoop) * (outputSettings.maxValue * nextAlternationSettings.volume / 100);
+                var valueForNextAlternation = nextAlternationSettings.waveFunction(currentTimeForWaveLoop) * nextAlternationSettings.volume / 100;
                 var alternationMethod = nextAlternationSettings.alternationMethod;
                 value =  alternationMethod(valueForCurrentAlternation, valueForNextAlternation, currentTimeForAlternation);
-                rate = alternationMethod(currentRate, nextAlternationSettings.rate, currentTimeForAlternation);// + currentTimeForAlternation * (nextAlternationSettings.rate - currentRate);
+                rate = alternationMethod(currentRate, nextAlternationSettings.rate, currentTimeForAlternation);
             } else {
                 value = valueForCurrentAlternation;
                 rate = currentRate;
@@ -218,11 +247,11 @@
         }
         return values;
     };
-    var makeDataValues = function(outputSettings, wavesSettings) {
-        var mergedValues = emptyValues(outputSettings);
+    var makeMergedWave = function(outputSettings, wavesSettings) {
+        var mergedValues = emptyWave(outputSettings);
         for (var i = 0; i < wavesSettings.length; ++i) {
-            var values = makeSingleDataValues(outputSettings, wavesSettings[i]);
-            for (var channel = 0; channel < values.length; ++values) {
+            var values = makeSingleWave(outputSettings, wavesSettings[i]);
+            for (var channel = 0; channel < values.length; ++channel) {
                 var samples = values[channel].length;
                 for (var sample = 0; sample < samples; ++sample) {
                     mergedValues[channel][sample] += values[channel][sample];
@@ -231,16 +260,24 @@
         }
         return mergedValues;
     };
-    var makeDataBytes = function(outputSettings, values) {
+    var makeDataBytes = function(outputSettings, wave) {
         var bytes = '';
+        var valueRange = outputSettings.maxValue - outputSettings.minValue;
+        var base = Math.ceil(outputSettings.minValue + valueRange / 2);
         for (var sample = 0; sample < outputSettings.sampleCount; ++sample) {
             for (var channel = 0; channel < outputSettings.channels; ++channel) {
-                bytes += bytesFromInt(values[channel][sample], outputSettings.bytesPerSample);
+                var value = base + Math.floor(wave[channel][sample] * valueRange);
+                if (value > outputSettings.maxValue) {
+                    value = outputSettings.maxValue;
+                } else if (value < outputSettings.minValue) {
+                    value = outputSettings.minValue;
+                }
+                bytes += bytesFromInt(value, outputSettings.bytesPerSample);
             }
         }
         return bytes;
     };
-    var makeWaveBytes = function(outputSettings, dataValues) {
+    var makeWaveBytes = function(outputSettings, wave) {
         var bytes = '';
         var formatPartLength = 16;
         bytes += 'RIFF';
@@ -256,7 +293,7 @@
         bytes += bytesFromInt(outputSettings.bytesPerSample * 8, 2);
         bytes += 'data';
         bytes += bytesFromInt(outputSettings.dataLength, 4);
-        bytes += makeDataBytes(outputSettings, dataValues);
+        bytes += makeDataBytes(outputSettings, wave);
         return bytes;
     };
     var resetContext = function(context, width, height) {
@@ -278,7 +315,7 @@
         var context = canvas.getContext('2d');
         resetContext(context, width, height);
     };
-    var drawWave = function(outputSettings, dataValues) {
+    var drawWave = function(outputSettings, wave) {
         var canvas = document.getElementById('wave-canvas');
         var width = canvas.width;
         var height = canvas.height;
@@ -288,7 +325,7 @@
         context.strokeStyle = 'rgba(0, 255, 0, 255)';
         context.lineWidth = 0.75;
         var calcY = function(x) {
-            return -yCenter * dataValues[0][Math.floor(x * (outputSettings.samplesPerSecond / 10) / width)] / outputSettings.maxValue;
+            return -yCenter * wave[0][Math.floor(x * (outputSettings.samplesPerSecond / 10) / width)];
         };
         context.beginPath();
         for (x = 0; x < width; ++ x) {
@@ -299,11 +336,11 @@
     var makeWave = function() {
         var outputSettings = readOutputSettings();
         var wavesSettings = readWavesSettings();
-        var dataValues = makeDataValues(outputSettings, wavesSettings);
-        var bytes = makeWaveBytes(outputSettings, dataValues);
+        var wave = makeMergedWave(outputSettings, wavesSettings);
+        var bytes = makeWaveBytes(outputSettings, wave);
         var base64 = 'data:audio/wav;base64,' + base64Encode(bytes);
         document.getElementById('audio').src = base64;
-        drawWave(outputSettings, dataValues);
+        drawWave(outputSettings, wave);
         document.getElementById('wave-link').href = base64;
     };
     document.getElementById('add-wave-form').onclick = function(event) {
