@@ -38,6 +38,20 @@
     var removeNode = function(node) {
         removeChild(node.parentNode, node);
     };
+    var insertAfter = function(element, previousElement) {
+        var parent = previousElement.parentNode;
+        var length = parent.childNodes.length;
+        for (var i = 0; i < length; ++i) {
+            if (parent.childNodes[i] == previousElement) {
+                if (i + 1 < length) {
+                    parent.insertBefore(element, parent.childNodes[i + 1]);
+                } else {
+                    parent.appendChild(element);
+                }
+                return;
+            }
+        }
+    };
     var radioValue = function(ids) {
         for (var i = 0, l = ids.length; i < l; ++i) {
             var radio = document.getElementById(ids[i]);
@@ -62,41 +76,62 @@
             maxValue: bytesPerSample == 1 ? 255 : (256 * 256 / 2) - 1
          };
     };
+    var findWaveElement = function(waveId, elementId) {
+        return document.getElementById('wave-' + waveId + '-' + elementId);
+    };
+    var findWaveSectionElement = function(waveId, sectionId, elementId) {
+        return findWaveElement(waveId, 'section-' + sectionId + '-' + elementId);
+    };
     var nextWaveId = 0;
     var addWaveForm = function() {
         var id = nextWaveId;
         nextWaveId++;
+        var waveElement = function(elementId) {
+            return findWaveElement(id, elementId);
+        };
         var clone = document.getElementById('wave-template').cloneNode(true);
         clone.innerHTML = clone.innerHTML.replace(/\:template\-wave\-id\:/g, id);
         var element = firstChildElement(clone);
         document.getElementById('wave-forms').appendChild(element);
-        var nextAlternationId = 0;
-        var addAlternationForm = function(nextElement) {
-            var alternationId = nextAlternationId;
-            nextAlternationId++;
-            var clone = document.getElementById('wave-' + id + '-alternation-template').cloneNode(true);
-            clone.innerHTML = clone.innerHTML.replace(/\:template\-alternation\-id\:/g, alternationId);
+        var nextSectionId = 0;
+        var addSectionForm = function(previousElement) {
+            var sectionId = nextSectionId;
+            nextSectionId++;
+            var sectionElement = function(elementId) {
+                return findWaveSectionElement(id, sectionId, elementId);
+            };
+            var clone = waveElement('section-template').cloneNode(true);
+            clone.innerHTML = clone.innerHTML.replace(/\:template\-section\-id\:/g, sectionId);
             var element = firstChildElement(clone);
-            var parent = document.getElementById('wave-' + id + '-alternations');
-            if (nextElement) {
-                parent.insertBefore(element, nextElement);
+            var parent = waveElement('sections');
+            if (previousElement) {
+                insertAfter(element, previousElement);
+                var previousSectionElement = function(elementId) {
+                    return document.getElementById(previousElement.id + '-' + elementId);
+                };
+                sectionElement('start').value = previousSectionElement('start').value;
+                sectionElement('type').value = previousSectionElement('type').value;
+                sectionElement('reversed').checked = previousSectionElement('reversed').checked;
+                sectionElement('rate').value = previousSectionElement('rate').value;
+                sectionElement('volume').value = previousSectionElement('volume').value;
+                sectionElement('alternation-method').value = previousSectionElement('alternation-method').value;
             } else {
                 parent.appendChild(element);
             }
-            document.getElementById('wave-' + id + '-alternation-' + alternationId + '-insert').onclick = function(event) {
-                addAlternationForm(element);
+            sectionElement('insert').onclick = function(event) {
+                addSectionForm(element);
             };
-            document.getElementById('wave-' + id + '-alternation-' + alternationId + '-delete').onclick = function(event) {
+            sectionElement('delete').onclick = function(event) {
                 removeNode(element);
             };
         }
-        document.getElementById('wave-' + id + '-add-alternation').onclick = function(event) {
-            addAlternationForm();
+        waveElement('add-section').onclick = function(event) {
+            addSectionForm();
         };
-        document.getElementById('wave-' + id + '-delete').onclick = function(event) {
+        waveElement('delete').onclick = function(event) {
             removeNode(element);
         };
-        addAlternationForm();
+        addSectionForm();
     };
     var waveFunctions = {
         'sin': function(timeRate) {
@@ -136,37 +171,40 @@
         };
     };
     var waveAlternationMethods = {
-        'average': function(valueForCurrent, valueForNext, timeForAlternation) {
-            return valueForCurrent * (1 - timeForAlternation) + valueForNext * timeForAlternation;
+        'average': function(valueForCurrent, valueForNext, timeForSection) {
+            return valueForCurrent * (1 - timeForSection) + valueForNext * timeForSection;
         },
-        'immediately': function(valueForCurrent, valueForNext, timeForAlternation) {
+        'immediately': function(valueForCurrent, valueForNext, timeForSection) {
             return valueForCurrent;
         }
     };
-    var readWaveAlternationSettings = function(waveId, alternationId) {
-        if (!document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-enabled').checked) return null;
-        var type = document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-type').value;
-        var reversed = document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-reversed').checked;
+    var readWaveSectionSettings = function(waveId, sectionId) {
+        var sectionElement = function(elementId) {
+            return findWaveSectionElement(waveId, sectionId, elementId);
+        };
+        if (!sectionElement('enabled').checked) return null;
+        var type = sectionElement('type').value;
+        var reversed = sectionElement('reversed').checked;
         return {
             type: type,
             reversed: reversed,
             waveFunction: reversed ? reverseWaveFunction(waveFunctions[type]) : waveFunctions[type],
-            alternationMethod: waveAlternationMethods[document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-method').value],
-            start: parseFloat(document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-start').value),
-            rate: parseFloat(document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-rate').value),
-            volume: parseFloat(document.getElementById('wave-' + waveId + '-alternation-' + alternationId + '-volume').value)
+            alternationMethod: waveAlternationMethods[sectionElement('alternation-method').value],
+            start: parseFloat(sectionElement('start').value),
+            rate: parseFloat(sectionElement('rate').value),
+            volume: parseFloat(sectionElement('volume').value)
         };
     };
     var readWaveSettings = function(waveId) {
-        var waveAlternationForms = childElements(document.getElementById('wave-' + waveId + '-alternations'));
-        var alternationsSettings = [];
-        for (var i = 0, l = waveAlternationForms.length; i < l; ++i) {
-            var alternationId = waveAlternationForms[i].id.match(/alternation\-([^\-]+)/)[1];
-            var alternationSettings = readWaveAlternationSettings(waveId, alternationId);
-            if (alternationSettings) alternationsSettings.push(alternationSettings);
+        var waveSectionForms = childElements(findWaveElement(waveId, 'sections'));
+        var sectionsSettings = [];
+        for (var i = 0, l = waveSectionForms.length; i < l; ++i) {
+            var sectionId = waveSectionForms[i].id.match(/section\-([^\-]+)/)[1];
+            var sectionSettings = readWaveSectionSettings(waveId, sectionId);
+            if (sectionSettings) sectionsSettings.push(sectionSettings);
         }
         return {
-            alternationsSettings: alternationsSettings
+            sectionsSettings: sectionsSettings
         };
     };
     var readWavesSettings = function() {
@@ -200,43 +238,43 @@
     };
     var makeSingleWave = function(outputSettings, waveSettings) {
         var values = emptyWave(outputSettings);
-        var alternationsSettings = waveSettings.alternationsSettings;
-        if (alternationsSettings.length <= 0) return values;
+        var sectionsSettings = waveSettings.sectionsSettings;
+        if (sectionsSettings.length <= 0) return values;
         var millisecondsToSamples = function(milliseconds) {
             return Math.floor(outputSettings.samplesPerSecond * milliseconds / 1000);
         };
         var currentTimeForWaveLoop = 0;
-        var currentAlternationSettingsIndex = -1;
-        var currentAlternationSettings = null;
-        var nextAlternationSettings = alternationsSettings[0];
+        var currentSectionSettingsIndex = -1;
+        var currentSectionSettings = null;
+        var nextSectionSettings = sectionsSettings[0];
         for (var sample = 0; sample < outputSettings.sampleCount; ++sample) {
-            while (nextAlternationSettings && sample >= millisecondsToSamples(nextAlternationSettings.start)) {
-                currentAlternationSettings = nextAlternationSettings;
-                currentAlternationSettingsIndex++;
-                nextAlternationSettings = currentAlternationSettingsIndex + 1 < alternationsSettings.length ? alternationsSettings[currentAlternationSettingsIndex + 1] : null;
+            while (nextSectionSettings && sample >= millisecondsToSamples(nextSectionSettings.start)) {
+                currentSectionSettings = nextSectionSettings;
+                currentSectionSettingsIndex++;
+                nextSectionSettings = currentSectionSettingsIndex + 1 < sectionsSettings.length ? sectionsSettings[currentSectionSettingsIndex + 1] : null;
             }
-            var valueForCurrentAlternation;
+            var valueForCurrentSection;
             var currentStart;
             var currentRate;
-            if (!currentAlternationSettings) {
-                valueForCurrentAlternation = 0;
+            if (!currentSectionSettings) {
+                valueForCurrentSection = 0;
                 currentStart = 0;
                 currentRate = 0;
             } else {
-                valueForCurrentAlternation = currentAlternationSettings.waveFunction(currentTimeForWaveLoop) * currentAlternationSettings.volume / 100;
-                currentStart = currentAlternationSettings.start;
-                currentRate = currentAlternationSettings.rate;
+                valueForCurrentSection = currentSectionSettings.waveFunction(currentTimeForWaveLoop) * currentSectionSettings.volume / 100;
+                currentStart = currentSectionSettings.start;
+                currentRate = currentSectionSettings.rate;
             }
             var rate;
             var value;
-            if (nextAlternationSettings && nextAlternationSettings.start > currentStart) {
-                var currentTimeForAlternation = (sample - millisecondsToSamples(currentStart)) / (millisecondsToSamples(nextAlternationSettings.start) - millisecondsToSamples(currentStart));
-                var valueForNextAlternation = nextAlternationSettings.waveFunction(currentTimeForWaveLoop) * nextAlternationSettings.volume / 100;
-                var alternationMethod = nextAlternationSettings.alternationMethod;
-                value =  alternationMethod(valueForCurrentAlternation, valueForNextAlternation, currentTimeForAlternation);
-                rate = alternationMethod(currentRate, nextAlternationSettings.rate, currentTimeForAlternation);
+            if (nextSectionSettings && nextSectionSettings.start > currentStart) {
+                var currentTimeForSection = (sample - millisecondsToSamples(currentStart)) / (millisecondsToSamples(nextSectionSettings.start) - millisecondsToSamples(currentStart));
+                var valueForNextSection = nextSectionSettings.waveFunction(currentTimeForWaveLoop) * nextSectionSettings.volume / 100;
+                var alternationMethod = nextSectionSettings.alternationMethod;
+                value =  alternationMethod(valueForCurrentSection, valueForNextSection, currentTimeForSection);
+                rate = alternationMethod(currentRate, nextSectionSettings.rate, currentTimeForSection);
             } else {
-                value = valueForCurrentAlternation;
+                value = valueForCurrentSection;
                 rate = currentRate;
             }
             currentTimeForWaveLoop += + rate / outputSettings.samplesPerSecond;
