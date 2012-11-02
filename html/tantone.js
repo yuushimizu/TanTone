@@ -421,8 +421,8 @@
         var width = context.canvas.width;
         var height = context.canvas.height;
         var yCenter = height / 2;
-        var length = samples.length * 1000 / outputSettings.samplesPerSecond;
-        var offsetSamples = middleMillisecond < 50 ? 0 : (length * Math.min(middleMillisecond - 50, length - 100) / length);
+        var lengthMilliseconds = samples.length * 1000 / outputSettings.samplesPerSecond;
+        var offsetSamples = middleMillisecond < 50 ? 0 : (samples.length * Math.min(middleMillisecond - 50, lengthMilliseconds - 100) / lengthMilliseconds);
         var calcY = function(x) {
             return yCenter - yCenter * samples[Math.floor(offsetSamples + (outputSettings.samplesPerSecond / 10) * x / width)];
         };
