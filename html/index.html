@@ -185,7 +185,6 @@
             <input type="radio" class="input-radio" name="output-bytes-per-sample" value="2" id="output-bytes-per-sample-2" checked="checked"><label for="output-bytes-per-sample-2">16ビット</label>
           </span>
         </p>
-        <p><span class="form-field-label">長さ</span><span><input type="text" class="input-text" value="1000.0" id="output-length">ミリ秒</span></p>
       </div>
       <h1>波形設定<img class="icon" src="./images/icon-snake.png"></h1>
       <div class="section wave-settings">
@@ -200,11 +199,12 @@
                   <p><a href="javascript:void(0)" id="wave-:template-wave-id:-section-:template-section-id:-insert">右にセクションを追加<img class="icon" src="./images/icon-right.png"></a></p>
                 </div>
                 <p><span class="form-field-label"><label for="wave-:template-wave-id:-section-:template-section-id:-enabled">有効</label></span><span><input type="checkbox" class="input-checkbox" id="wave-:template-wave-id:-section-:template-section-id:-enabled" checked="checked"></span></p>
-                <p><span class="form-field-label">開始</span><span><input type="text" class="input-text" value="0.0" id="wave-:template-wave-id:-section-:template-section-id:-start">ミリ秒</span></p>
+                <p><span class="form-field-label">長さ</span><span><input type="text" class="input-text" value="1000.0" id="wave-:template-wave-id:-section-:template-section-id:-length">ミリ秒</span></p>
                 <p>
                   <span class="form-field-label">種類</span>
                   <span>
                     <select id="wave-:template-wave-id:-section-:template-section-id:-type">
+                      <option value="none">なし</option>
                       <option value="sin" selected="selected">正弦</option>
                       <option value="rect">矩形</option>
                       <option value="saw">のこぎり</option>

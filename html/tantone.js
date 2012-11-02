@@ -70,15 +70,10 @@
         var samplesPerSecond = parseInt(document.getElementById('output-samples-per-second').value);
         var channels = parseInt(radioValue(['output-channels-1', 'output-channels-2']));
         var bytesPerSample = parseInt(radioValue(['output-bytes-per-sample-1', 'output-bytes-per-sample-2']));
-        var length = parseFloat(document.getElementById('output-length').value);
-        var sampleCount = Math.floor(samplesPerSecond * length / 1000);
         return {
             samplesPerSecond: samplesPerSecond,
             channels: channels,
             bytesPerSample: bytesPerSample,
-            length: length,
-            sampleCount: sampleCount,
-            dataLength: sampleCount * bytesPerSample * channels,
             minValue: bytesPerSample == 1 ? 0 : -(256 * 256 / 2),
             maxValue: bytesPerSample == 1 ? 255 : (256 * 256 / 2) - 1
          };
@@ -116,7 +111,7 @@
                 var previousSectionElement = function(elementId) {
                     return document.getElementById(previousElement.id + '-' + elementId);
                 };
-                sectionElement('start').value = previousSectionElement('start').value;
+                sectionElement('length').value = 1000;
                 sectionElement('type').value = previousSectionElement('type').value;
                 sectionElement('reversed').checked = previousSectionElement('reversed').checked;
                 sectionElement('rate').value = previousSectionElement('rate').value;
@@ -142,6 +137,9 @@
     };
     var waveFunctions = function() {
         return {
+            'none': function(timeRate) {
+                return 0;
+            },
             'sin': function(timeRate) {
                 return Math.sin(timeRate * Math.PI * 2);
             },
@@ -205,7 +203,7 @@
             reversed: reversed,
             waveFunction: reversed ? reverseWaveFunction(waveFunctions()[type]) : waveFunctions()[type],
             alternationMethod: waveAlternationMethods[sectionElement('alternation-method').value],
-            start: parseFloat(sectionElement('start').value),
+            length: parseFloat(sectionElement('length').value),
             rate: parseFloat(sectionElement('rate').value),
             volume: parseFloat(sectionElement('volume').value)
         };
@@ -243,12 +241,7 @@
     };
     var emptyWave = function(outputSettings) {
         var values = [];
-        for (var channel = 0; channel < outputSettings.channels; ++channel) {
-            values[channel] = [];
-            for (var sample = 0; sample < outputSettings.sampleCount; ++sample) {
-                values[channel][sample] = 0;
-            }
-        }
+        for (var channel = 0; channel < outputSettings.channels; ++channel) values[channel] = [];
         return values;
     };
     var makeSingleWave = function(outputSettings, waveSettings) {
@@ -259,44 +252,52 @@
             return Math.floor(outputSettings.samplesPerSecond * milliseconds / 1000);
         };
         var currentTimeForWaveLoop = 0;
-        var currentSectionSettingsIndex = -1;
-        var currentSectionSettings = null;
         var nextSectionSettings = sectionsSettings[0];
-        for (var sample = 0; sample < outputSettings.sampleCount; ++sample) {
-            while (nextSectionSettings && sample >= millisecondsToSamples(nextSectionSettings.start)) {
+        var currentSectionStart = 0;
+        var currentSectionSettingsIndex = -1;
+        var currentSectionSettings = {
+            type: 'none',
+            reversed: false,
+            waveFunction: waveFunctions()['none'],
+            alternationMethod: waveAlternationMethods['immediately'],
+            length: 0,
+            rate: 1,
+            volume: 0
+        };
+        var sample = 0;
+        while (true) {
+            var currentSectionEnd = currentSectionStart + millisecondsToSamples(currentSectionSettings.length);
+            while (sample >= currentSectionEnd) {
+                currentSectionStart = currentSectionEnd;
                 currentSectionSettings = nextSectionSettings;
                 currentSectionSettingsIndex++;
-                nextSectionSettings = currentSectionSettingsIndex + 1 < sectionsSettings.length ? sectionsSettings[currentSectionSettingsIndex + 1] : null;
+                currentSectionEnd = currentSectionStart + millisecondsToSamples(currentSectionSettings.length);
+                if (currentSectionSettingsIndex >= sectionsSettings.length) return values;
+                if (currentSectionSettingsIndex + 1 < sectionsSettings.length) {
+                    nextSectionSettings = sectionsSettings[currentSectionSettingsIndex + 1];
+                } else {
+                    nextSectionSettings = {
+                        type: 'none',
+                        reversed: false,
+                        waveFunction: waveFunctions()['none'],
+                        alternationMethod: waveAlternationMethods['immediately'],
+                        length: 0,
+                        rate: 1,
+                        volume: 0
+                    };
+                }
             }
-            var valueForCurrentSection;
-            var currentStart;
-            var currentRate;
-            if (!currentSectionSettings) {
-                valueForCurrentSection = 0;
-                currentStart = 0;
-                currentRate = 0;
-            } else {
-                valueForCurrentSection = currentSectionSettings.waveFunction(currentTimeForWaveLoop) * currentSectionSettings.volume / 100;
-                currentStart = currentSectionSettings.start;
-                currentRate = currentSectionSettings.rate;
-            }
-            var rate;
-            var value;
-            if (nextSectionSettings && nextSectionSettings.start > currentStart) {
-                var currentTimeForSection = (sample - millisecondsToSamples(currentStart)) / (millisecondsToSamples(nextSectionSettings.start) - millisecondsToSamples(currentStart));
-                var valueForNextSection = nextSectionSettings.waveFunction(currentTimeForWaveLoop) * nextSectionSettings.volume / 100;
-                var alternationMethod = nextSectionSettings.alternationMethod;
-                value =  alternationMethod(valueForCurrentSection, valueForNextSection, currentTimeForSection);
-                rate = alternationMethod(currentRate, nextSectionSettings.rate, currentTimeForSection);
-            } else {
-                value = valueForCurrentSection;
-                rate = currentRate;
-            }
-            currentTimeForWaveLoop += + rate / outputSettings.samplesPerSecond;
-            currentTimeForWaveLoop -= Math.floor(currentTimeForWaveLoop);
+            var valueForCurrentSection = currentSectionSettings.waveFunction(currentTimeForWaveLoop) * currentSectionSettings.volume / 100;
+            var valueForNextSection = nextSectionSettings.waveFunction(currentTimeForWaveLoop) * nextSectionSettings.volume / 100;
+            var currentTimeForSection = (sample - currentSectionStart) / millisecondsToSamples(currentSectionSettings.length);
+            var value =  nextSectionSettings.alternationMethod(valueForCurrentSection, valueForNextSection, currentTimeForSection);
             for (var channel = 0; channel < outputSettings.channels; ++channel) {
                 values[channel][sample] = value;
             }
+            var rate = nextSectionSettings.alternationMethod(currentSectionSettings.rate, nextSectionSettings.rate, currentTimeForSection);
+            currentTimeForWaveLoop += + rate / outputSettings.samplesPerSecond;
+            currentTimeForWaveLoop -= Math.floor(currentTimeForWaveLoop);
+            sample++;
         }
         return values;
     };
@@ -307,7 +308,7 @@
             for (var channel = 0; channel < values.length; ++channel) {
                 var samples = values[channel].length;
                 for (var sample = 0; sample < samples; ++sample) {
-                    mergedValues[channel][sample] += values[channel][sample];
+                    mergedValues[channel][sample] = (mergedValues[channel][sample] || 0) + values[channel][sample];
                 }
             }
         }
@@ -317,7 +318,8 @@
         var bytes = '';
         var valueRange = outputSettings.maxValue - outputSettings.minValue;
         var base = Math.ceil(outputSettings.minValue + valueRange / 2);
-        for (var sample = 0; sample < outputSettings.sampleCount; ++sample) {
+        var sampleCount = wave[0].length;
+        for (var sample = 0; sample < sampleCount; ++sample) {
             for (var channel = 0; channel < outputSettings.channels; ++channel) {
                 var value = base + Math.floor(wave[channel][sample] * valueRange);
                 if (value > outputSettings.maxValue) {
@@ -333,8 +335,9 @@
     var makeWaveBytes = function(outputSettings, wave) {
         var bytes = '';
         var formatPartLength = 16;
+        var dataLength = wave[0].length * outputSettings.channels * outputSettings.bytesPerSample;
         bytes += 'RIFF';
-        bytes += bytesFromInt(4 + 4 + 4 + formatPartLength + 4 + outputSettings.dataLength, 4);
+        bytes += bytesFromInt(4 + 4 + 4 + formatPartLength + 4 + dataLength, 4);
         bytes += 'WAVE';
         bytes += 'fmt ';
         bytes += bytesFromInt(formatPartLength, 4);
@@ -345,7 +348,7 @@
         bytes += bytesFromInt(outputSettings.bytesPerSample * 8 * outputSettings.channels, 2); // block size
         bytes += bytesFromInt(outputSettings.bytesPerSample * 8, 2);
         bytes += 'data';
-        bytes += bytesFromInt(outputSettings.dataLength, 4);
+        bytes += bytesFromInt(dataLength, 4);
         bytes += makeDataBytes(outputSettings, wave);
         return bytes;
     };
@@ -377,9 +380,10 @@
         context.lineWidth = 0.75;
         context.beginPath();
         var yCenter = height / 2;
+        var sampleCount = wave[0].length;
         for (var x = 0; x < width; ++x) {
-            var startSample = Math.floor(x * outputSettings.sampleCount / width);
-            var endSample = Math.min(Math.floor((x + 1) * outputSettings.sampleCount / width), wave[0].length);
+            var startSample = Math.floor(x * sampleCount / width);
+            var endSample = Math.min(Math.floor((x + 1) * sampleCount / width), sampleCount);
             var max = undefined;
             var min = undefined;
             for (var sample = startSample; sample < endSample; ++sample) {
@@ -391,7 +395,7 @@
             if (min !== undefined) context.lineTo(x, yCenter - yCenter * min);
         }
         context.stroke();
-        var length = outputSettings.length;
+        var length = sampleCount * 1000 / outputSettings.samplesPerSecond;
         for (var current = 100; current < length; current += 100) {
             context.strokeStyle = current % 500 == 0 ? 'rgba(224, 224, 224, 255)' : 'rgba(128, 128, 128, 255)';
             context.beginPath();
@@ -408,7 +412,8 @@
         var yCenter = height / 2;
         context.strokeStyle = 'rgba(0, 255, 0, 255)';
         context.lineWidth = 0.75;
-        var offsetSamples = middleMillisecond < 50 ? 0 : (outputSettings.sampleCount * Math.min(middleMillisecond - 50, outputSettings.length - 100) / outputSettings.length);
+        var length = wave[0].length * 1000 / outputSettings.samplesPerSecond;
+        var offsetSamples = middleMillisecond < 50 ? 0 : (wave[0].length * Math.min(middleMillisecond - 50, length - 100) / length);
         var calcY = function(x) {
             return yCenter - yCenter * wave[0][Math.floor(offsetSamples + (outputSettings.samplesPerSecond / 10) * x / width)];
         };
@@ -424,9 +429,10 @@
         drawScaledWave(outputSettings, wave, 0);
         var scaledCanvas = document.getElementById('wave-canvas-scaled');
         var canvas = document.getElementById('wave-canvas');
+        var length = wave[0].length * 1000 / outputSettings.samplesPerSecond;
         var listener = function(event) {
             resetCanvas(scaledCanvas);
-            drawScaledWave(outputSettings, wave, outputSettings.length * event.offsetX / canvas.width);
+            drawScaledWave(outputSettings, wave, length * event.offsetX / canvas.width);
         };
         canvas.onmousemove = listener;
     };
