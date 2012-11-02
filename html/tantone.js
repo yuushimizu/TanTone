@@ -115,7 +115,8 @@
                 sectionElement('type').value = previousSectionElement('type').value;
                 sectionElement('reversed').checked = previousSectionElement('reversed').checked;
                 sectionElement('rate').value = previousSectionElement('rate').value;
-                sectionElement('volume').value = previousSectionElement('volume').value;
+                sectionElement('volume-0').value = previousSectionElement('volume-0').value;
+                sectionElement('volume-1').value = previousSectionElement('volume-1').value;
                 sectionElement('alternation-method').value = previousSectionElement('alternation-method').value;
             } else {
                 insertToFirst(parent, element);
@@ -191,7 +192,7 @@
             return valueForCurrent;
         }
     };
-    var readWaveSectionSettings = function(waveId, sectionId) {
+    var readWaveSection = function(waveId, sectionId) {
         var sectionElement = function(elementId) {
             return findWaveSectionElement(waveId, sectionId, elementId);
         };
@@ -205,29 +206,29 @@
             alternationMethod: waveAlternationMethods[sectionElement('alternation-method').value],
             length: parseFloat(sectionElement('length').value),
             rate: parseFloat(sectionElement('rate').value),
-            volume: parseFloat(sectionElement('volume').value)
+            volumes: [parseFloat(sectionElement('volume-0').value), parseFloat(sectionElement('volume-1').value)]
         };
     };
-    var readWaveSettings = function(waveId) {
+    var readWave = function(waveId) {
         var waveSectionForms = childElements(findWaveElement(waveId, 'sections'));
-        var sectionsSettings = [];
+        var sections = [];
         for (var i = 0, l = waveSectionForms.length; i < l; ++i) {
             var sectionId = waveSectionForms[i].id.match(/section\-([^\-]+)/)[1];
-            var sectionSettings = readWaveSectionSettings(waveId, sectionId);
-            if (sectionSettings) sectionsSettings.push(sectionSettings);
+            var section = readWaveSection(waveId, sectionId);
+            if (section) sections.push(section);
         }
         return {
-            sectionsSettings: sectionsSettings
+            sections: sections
         };
     };
-    var readWavesSettings = function() {
+    var readWaves = function() {
         var waveForms = childElements(document.getElementById('wave-forms'));
-        var wavesSettings = [];
+        var waves = [];
         for (var i = 0, l = waveForms.length; i < l; ++i) {
             var waveId = waveForms[i].id.match(/^wave\-([^\-]+)/)[1];
-            wavesSettings.push(readWaveSettings(waveId));
+            waves.push(readWave(waveId));
         }
-        return wavesSettings;
+        return waves;
     }
     var bytesFromInt = function(value, bytes) {
         if (value == undefined || bytes == undefined || isNaN(value) || value == Infinity) throw 'Invalid value: ' + value + ' or bytes: ' + bytes;
@@ -244,67 +245,70 @@
         for (var channel = 0; channel < outputSettings.channels; ++channel) values[channel] = [];
         return values;
     };
-    var makeSingleWave = function(outputSettings, waveSettings) {
+    var sampleSingleWave = function(outputSettings, wave) {
         var values = emptyWave(outputSettings);
-        var sectionsSettings = waveSettings.sectionsSettings;
-        if (sectionsSettings.length <= 0) return values;
+        var sections = wave.sections;
+        if (sections.length <= 0) return values;
         var millisecondsToSamples = function(milliseconds) {
             return Math.floor(outputSettings.samplesPerSecond * milliseconds / 1000);
         };
         var currentTimeForWaveLoop = 0;
-        var nextSectionSettings = sectionsSettings[0];
+        var nextSection = sections[0];
         var currentSectionStart = 0;
-        var currentSectionSettingsIndex = -1;
-        var currentSectionSettings = {
+        var currentSectionIndex = -1;
+        var emptyVolumes = [];
+        for (var channel = 0; channel < outputSettings.channels; ++channel) emptyVolumes[channel] = 0;
+        var currentSection = {
             type: 'none',
             reversed: false,
             waveFunction: waveFunctions()['none'],
             alternationMethod: waveAlternationMethods['immediately'],
             length: 0,
             rate: 1,
-            volume: 0
+            volumes: emptyVolumes
         };
         var sample = 0;
         while (true) {
-            var currentSectionEnd = currentSectionStart + millisecondsToSamples(currentSectionSettings.length);
+            var currentSectionEnd = currentSectionStart + millisecondsToSamples(currentSection.length);
             while (sample >= currentSectionEnd) {
                 currentSectionStart = currentSectionEnd;
-                currentSectionSettings = nextSectionSettings;
-                currentSectionSettingsIndex++;
-                currentSectionEnd = currentSectionStart + millisecondsToSamples(currentSectionSettings.length);
-                if (currentSectionSettingsIndex >= sectionsSettings.length) return values;
-                if (currentSectionSettingsIndex + 1 < sectionsSettings.length) {
-                    nextSectionSettings = sectionsSettings[currentSectionSettingsIndex + 1];
+                currentSection = nextSection;
+                currentSectionIndex++;
+                currentSectionEnd = currentSectionStart + millisecondsToSamples(currentSection.length);
+                if (currentSectionIndex >= sections.length) return values;
+                if (currentSectionIndex + 1 < sections.length) {
+                    nextSection = sections[currentSectionIndex + 1];
                 } else {
-                    nextSectionSettings = {
+                    nextSection = {
                         type: 'none',
                         reversed: false,
                         waveFunction: waveFunctions()['none'],
                         alternationMethod: waveAlternationMethods['immediately'],
                         length: 0,
                         rate: 1,
-                        volume: 0
+                        volumes: emptyVolumes
                     };
                 }
             }
-            var valueForCurrentSection = currentSectionSettings.waveFunction(currentTimeForWaveLoop) * currentSectionSettings.volume / 100;
-            var valueForNextSection = nextSectionSettings.waveFunction(currentTimeForWaveLoop) * nextSectionSettings.volume / 100;
-            var currentTimeForSection = (sample - currentSectionStart) / millisecondsToSamples(currentSectionSettings.length);
-            var value =  nextSectionSettings.alternationMethod(valueForCurrentSection, valueForNextSection, currentTimeForSection);
+            var baseValueForCurrentSection = currentSection.waveFunction(currentTimeForWaveLoop);
+            var baseValueForNextSection = nextSection.waveFunction(currentTimeForWaveLoop);
+            var currentTimeForSection = (sample - currentSectionStart) / millisecondsToSamples(currentSection.length);
             for (var channel = 0; channel < outputSettings.channels; ++channel) {
-                values[channel][sample] = value;
+                var valueForCurrentSection = baseValueForCurrentSection * currentSection.volumes[channel] / 100;
+                var valueForNextSection = baseValueForNextSection * nextSection.volumes[channel] / 100;
+                values[channel][sample] = nextSection.alternationMethod(valueForCurrentSection, valueForNextSection, currentTimeForSection);
             }
-            var rate = nextSectionSettings.alternationMethod(currentSectionSettings.rate, nextSectionSettings.rate, currentTimeForSection);
+            var rate = nextSection.alternationMethod(currentSection.rate, nextSection.rate, currentTimeForSection);
             currentTimeForWaveLoop += + rate / outputSettings.samplesPerSecond;
             currentTimeForWaveLoop -= Math.floor(currentTimeForWaveLoop);
             sample++;
         }
         return values;
     };
-    var makeMergedWave = function(outputSettings, wavesSettings) {
+    var sampleMergedWave = function(outputSettings, waves) {
         var mergedValues = emptyWave(outputSettings);
-        for (var i = 0; i < wavesSettings.length; ++i) {
-            var values = makeSingleWave(outputSettings, wavesSettings[i]);
+        for (var i = 0; i < waves.length; ++i) {
+            var values = sampleSingleWave(outputSettings, waves[i]);
             for (var channel = 0; channel < values.length; ++channel) {
                 var samples = values[channel].length;
                 for (var sample = 0; sample < samples; ++sample) {
@@ -314,14 +318,14 @@
         }
         return mergedValues;
     };
-    var makeDataBytes = function(outputSettings, wave) {
+    var makeDataBytes = function(outputSettings, samples) {
         var bytes = '';
         var valueRange = outputSettings.maxValue - outputSettings.minValue;
         var base = Math.ceil(outputSettings.minValue + valueRange / 2);
-        var sampleCount = wave[0].length;
+        var sampleCount = samples[0].length;
         for (var sample = 0; sample < sampleCount; ++sample) {
             for (var channel = 0; channel < outputSettings.channels; ++channel) {
-                var value = base + Math.floor(wave[channel][sample] * valueRange);
+                var value = base + Math.floor(samples[channel][sample] * valueRange);
                 if (value > outputSettings.maxValue) {
                     value = outputSettings.maxValue;
                 } else if (value < outputSettings.minValue) {
@@ -332,10 +336,10 @@
         }
         return bytes;
     };
-    var makeWaveBytes = function(outputSettings, wave) {
+    var makeWaveFileBytes = function(outputSettings, samples) {
         var bytes = '';
         var formatPartLength = 16;
-        var dataLength = wave[0].length * outputSettings.channels * outputSettings.bytesPerSample;
+        var dataLength = samples[0].length * outputSettings.channels * outputSettings.bytesPerSample;
         bytes += 'RIFF';
         bytes += bytesFromInt(4 + 4 + 4 + formatPartLength + 4 + dataLength, 4);
         bytes += 'WAVE';
@@ -349,7 +353,7 @@
         bytes += bytesFromInt(outputSettings.bytesPerSample * 8, 2);
         bytes += 'data';
         bytes += bytesFromInt(dataLength, 4);
-        bytes += makeDataBytes(outputSettings, wave);
+        bytes += makeDataBytes(outputSettings, samples);
         return bytes;
     };
     var resetCanvas = function(canvas) {
@@ -371,23 +375,20 @@
         resetCanvas(document.getElementById('wave-canvas'));
         resetCanvas(document.getElementById('wave-canvas-scaled'));
     };
-    var drawFullWave = function(outputSettings, wave) {
-        var canvas = document.getElementById('wave-canvas');
-        var width = canvas.width;
-        var height = canvas.height;
-        var context = canvas.getContext('2d');
-        context.strokeStyle = 'rgba(0, 255, 0, 255)';
-        context.lineWidth = 0.75;
-        context.beginPath();
+    var drawSingleChannelFullWave = function(context, outputSettings, samples) {
+        var width = context.canvas.width;
+        var height = context.canvas.height;
         var yCenter = height / 2;
-        var sampleCount = wave[0].length;
+        context.beginPath();
+        context.moveTo(0, yCenter);
+        var sampleCount = samples.length;
         for (var x = 0; x < width; ++x) {
             var startSample = Math.floor(x * sampleCount / width);
             var endSample = Math.min(Math.floor((x + 1) * sampleCount / width), sampleCount);
             var max = undefined;
             var min = undefined;
             for (var sample = startSample; sample < endSample; ++sample) {
-                var value = wave[0][sample];
+                var value = samples[sample];
                 if (max === undefined || max < value) max = value;
                 if (min === undefined || min > value) min = value;
             }
@@ -395,7 +396,19 @@
             if (min !== undefined) context.lineTo(x, yCenter - yCenter * min);
         }
         context.stroke();
-        var length = sampleCount * 1000 / outputSettings.samplesPerSecond;
+    };
+    var waveStrokeStyles = ['rgba(0, 255, 0, 128)', 'rgba(0, 128, 255, 128)'];
+    var drawFullWave = function(outputSettings, samples) {
+        var canvas = document.getElementById('wave-canvas');
+        var width = canvas.width;
+        var height = canvas.height;
+        var context = canvas.getContext('2d');
+        context.lineWidth = 0.75;
+        for (var channel = 0; channel < outputSettings.channels; ++channel) {
+            context.strokeStyle = waveStrokeStyles[channel];
+            drawSingleChannelFullWave(context, outputSettings, samples[channel]);
+        }
+        var length = samples.length * 1000 / outputSettings.samplesPerSecond;
         for (var current = 100; current < length; current += 100) {
             context.strokeStyle = current % 500 == 0 ? 'rgba(224, 224, 224, 255)' : 'rgba(128, 128, 128, 255)';
             context.beginPath();
@@ -404,18 +417,14 @@
             context.stroke();
         }
     };
-    var drawScaledWave = function(outputSettings, wave, middleMillisecond) {
-        var canvas = document.getElementById('wave-canvas-scaled');
-        var width = canvas.width;
-        var height = canvas.height;
-        var context = canvas.getContext('2d');
+    var drawSingleChannelScaledWave = function(context, outputSettings, samples, middleMillisecond) {
+        var width = context.canvas.width;
+        var height = context.canvas.height;
         var yCenter = height / 2;
-        context.strokeStyle = 'rgba(0, 255, 0, 255)';
-        context.lineWidth = 0.75;
-        var length = wave[0].length * 1000 / outputSettings.samplesPerSecond;
-        var offsetSamples = middleMillisecond < 50 ? 0 : (wave[0].length * Math.min(middleMillisecond - 50, length - 100) / length);
+        var length = samples.length * 1000 / outputSettings.samplesPerSecond;
+        var offsetSamples = middleMillisecond < 50 ? 0 : (length * Math.min(middleMillisecond - 50, length - 100) / length);
         var calcY = function(x) {
-            return yCenter - yCenter * wave[0][Math.floor(offsetSamples + (outputSettings.samplesPerSecond / 10) * x / width)];
+            return yCenter - yCenter * samples[Math.floor(offsetSamples + (outputSettings.samplesPerSecond / 10) * x / width)];
         };
         context.beginPath();
         for (var x = 0; x < width; ++ x) {
@@ -423,27 +432,36 @@
         }
         context.stroke();
     };
-    var drawWave = function(outputSettings, wave) {
+    var drawScaledWave = function(outputSettings, samples, middleMillisecond) {
+        var canvas = document.getElementById('wave-canvas-scaled');
+        var context = canvas.getContext('2d');
+        context.lineWidth = 0.75;
+        for (var channel = 0; channel < outputSettings.channels; ++channel) {
+            context.strokeStyle = waveStrokeStyles[channel];
+            drawSingleChannelScaledWave(context, outputSettings, samples[channel], middleMillisecond);
+        }
+    };
+    var drawWave = function(outputSettings, samples) {
         resetCanvases();
-        drawFullWave(outputSettings, wave);
-        drawScaledWave(outputSettings, wave, 0);
+        drawFullWave(outputSettings, samples);
+        drawScaledWave(outputSettings, samples, 0);
         var scaledCanvas = document.getElementById('wave-canvas-scaled');
         var canvas = document.getElementById('wave-canvas');
-        var length = wave[0].length * 1000 / outputSettings.samplesPerSecond;
+        var length = samples[0].length * 1000 / outputSettings.samplesPerSecond;
         var listener = function(event) {
             resetCanvas(scaledCanvas);
-            drawScaledWave(outputSettings, wave, length * event.offsetX / canvas.width);
+            drawScaledWave(outputSettings, samples, length * event.offsetX / canvas.width);
         };
         canvas.onmousemove = listener;
     };
     var makeWave = function() {
         var outputSettings = readOutputSettings();
-        var wavesSettings = readWavesSettings();
-        var wave = makeMergedWave(outputSettings, wavesSettings);
-        var bytes = makeWaveBytes(outputSettings, wave);
+        var waves = readWaves();
+        var samples = sampleMergedWave(outputSettings, waves);
+        var bytes = makeWaveFileBytes(outputSettings, samples);
         var base64 = 'data:audio/wav;base64,' + base64Encode(bytes);
         document.getElementById('audio').src = base64;
-        drawWave(outputSettings, wave);
+        drawWave(outputSettings, samples);
         document.getElementById('wave-link').href = base64;
     };
     document.getElementById('add-wave-form').onclick = function(event) {

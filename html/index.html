@@ -76,6 +76,11 @@
       .input-text {
         padding: 0.2em;
         margin-right: 0.2em;
+        width: 5em;
+      }
+
+      .volume-field {
+        width: 4em;
       }
 
       .input-submit {
@@ -217,7 +222,11 @@
                   </span>
                 </p>
                 <p><span class="form-field-label">周波数</span><span><input type="text" class="input-text" value="440.0" id="wave-:template-wave-id:-section-:template-section-id:-rate">Hz</span></p>
-                <p><span class="form-field-label">音量</span><span><input type="text" class="input-text" value="50.0" id="wave-:template-wave-id:-section-:template-section-id:-volume">%</span></p>
+                <p>
+                  <span class="form-field-label">音量</span>
+                  <span>左/モノラル<input type="text" class="input-text volume-field" value="50.0" id="wave-:template-wave-id:-section-:template-section-id:-volume-0">%</span>
+                  <span>右<input type="text" class="input-text volume-field" value="50.0" id="wave-:template-wave-id:-section-:template-section-id:-volume-1">%</span>
+                </p>
                 <p>
                   <span class="form-field-label">変化方法</span>
                   <span>
