@@ -293,6 +293,7 @@
         var timeInLoop = 0;
         return {
             modulate: function(source) {
+                if (!modulation.enabled) return source;
                 return source + source * modulation.waveFunction(timeInLoop) * modulation.volume / 100;
             },
             addMilliseconds: function(milliseconds) {
@@ -317,19 +318,21 @@
         dummySection.length = 0;
         dummySection.volumes = emptyVolumes;
         var currentSection = sections[0];
-        var currentFrequencyModulator = currentSection.frequencyModulation.enabled ? waveModulator(currentSection.frequencyModulation) : null;
-        var currentVolumeModulator = currentSection.volumeModulation.enabled ? waveModulator(currentSection.volumeModulation) : null;
+        var currentFrequencyModulator = waveModulator(currentSection.frequencyModulation);
+        var currentVolumeModulator = waveModulator(currentSection.volumeModulation);
         var currentSectionStart = 0;
         var currentSectionIndex = 0;
         var nextSection = sections.length > 1 ? sections[1] : dummySection;
+        var nextFrequencyModulator = waveModulator(nextSection.frequencyModulation);
+        var nextVolumeModulator = waveModulator(nextSection.volumeModulation);
         var sample = 0;
         while (true) {
             var currentSectionEnd = currentSectionStart + millisecondsToSamples(currentSection.length);
             while (sample >= currentSectionEnd) {
                 currentSectionStart = currentSectionEnd;
                 currentSection = nextSection;
-                currentFrequencyModulator = currentSection.frequencyModulation.enabled ? waveModulator(currentSection.frequencyModulation) : null;
-                currentVolumeModulator = currentSection.volumeModulation.enabled ? waveModulator(currentSection.volumeModulation) : null;
+                currentFrequencyModulator = nextFrequencyModulator;
+                currentVolumeModulator = nextVolumeModulator;
                 currentSectionIndex++;
                 currentSectionEnd = currentSectionStart + millisecondsToSamples(currentSection.length);
                 if (currentSectionIndex >= sections.length) return values;
@@ -338,24 +341,27 @@
                 } else {
                     nextSection = dummySection;
                 }
+                nextFrequencyModulator = waveModulator(nextSection.frequencyModulation);
+                nextVolumeModulator = waveModulator(nextSection.volumeModulation);
             }
             var baseValueForCurrentSection = currentSection.waveFunction(currentTimeForWaveLoop);
             var baseValueForNextSection = nextSection.waveFunction(currentTimeForWaveLoop);
             var currentTimeForSection = (sample - currentSectionStart) / millisecondsToSamples(currentSection.length);
             for (var channel = 0; channel < outputSettings.channels; ++channel) {
-                var currentVolume = currentSection.volumes[channel];
-                if (currentVolumeModulator) currentVolume = currentVolumeModulator.modulate(currentVolume);
+                var currentVolume = currentVolumeModulator.modulate(currentSection.volumes[channel]);
                 var valueForCurrentSection = baseValueForCurrentSection * currentVolume / 100;
-                var valueForNextSection = baseValueForNextSection * nextSection.volumes[channel] / 100;
+                var nextVolume = nextVolumeModulator.modulate(nextSection.volumes[channel]);
+                var valueForNextSection = baseValueForNextSection * nextVolume / 100;
                 var value = currentSection.alternationFunction(valueForCurrentSection, valueForNextSection, currentTimeForSection);
                 values[channel][sample] = value;
             }
-            if (currentVolumeModulator) currentVolumeModulator.addMilliseconds(1000 / outputSettings.samplesPerSecond);
-            var frequency = currentSection.alternationFunction(currentSection.frequency, nextSection.frequency, currentTimeForSection);
-            if (currentFrequencyModulator) {
-                frequency = currentFrequencyModulator.modulate(frequency);
-                currentFrequencyModulator.addMilliseconds(1000 / outputSettings.samplesPerSecond);
-            }
+            currentVolumeModulator.addMilliseconds(1000 / outputSettings.samplesPerSecond);
+            nextVolumeModulator.addMilliseconds(1000 / outputSettings.samplesPerSecond);
+            var currentFrequency = currentFrequencyModulator.modulate(currentSection.frequency);
+            currentFrequencyModulator.addMilliseconds(1000 / outputSettings.samplesPerSecond);
+            var nextFrequency = nextFrequencyModulator.modulate(nextSection.frequency);
+            nextFrequencyModulator.addMilliseconds(1000 / outputSettings.samplesPerSecond);
+            var frequency = currentSection.alternationFunction(currentFrequency, nextFrequency, currentTimeForSection);
             currentTimeForWaveLoop = floatModulo(currentTimeForWaveLoop + frequency / outputSettings.samplesPerSecond, 1);
             sample++;
         }
