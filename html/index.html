@@ -157,7 +157,7 @@
         width: 4em;
       }
 
-      .wave-section-modulation-form {
+      .wave-section-optional-form {
         display: none;
       }
 
@@ -267,12 +267,12 @@
                     <span>右<input type="text" class="input-text volume-field" value="50.0" id="wave-:template-wave-id:-section-:template-section-id:-volume-1">%</span>
                   </p>
                 </div>
-                <label for="wave-:template-wave-id:-section-:template-section-id:-modulation-enabled"><h2><input type="checkbox" class="input-checkbox" id="wave-:template-wave-id:-section-:template-section-id:-modulation-enabled">周波数変調波</h2><label>
-                <div class="sub-section wave-section-modulation-form" id="wave-:template-wave-id:-section-:template-section-id:-modulation-form">
+                <label for="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-enabled"><h2><input type="checkbox" class="input-checkbox" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-enabled">周波数変調波</h2></label>
+                <div class="sub-section wave-section-optional-form" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-form">
                   <p>
                     <span class="form-field-label">種類</span>
                     <span>
-                      <select id="wave-:template-wave-id:-section-:template-section-id:-modulation-type">
+                      <select id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-type">
                         <option value="none">なし</option>
                         <option value="sin" selected="selected">正弦</option>
                         <option value="rect">矩形</option>
@@ -283,16 +283,44 @@
                         <option value="snake-tongue">ヘビの舌</option>
                         <option value="nazo">謎</option>
                       </select>
-                      <input type="checkbox" id="wave-:template-wave-id:-section-:template-section-id:-modulation-reversed"><label for="wave-:template-wave-id:-section-:template-section-id:-modulation-reversed">反転</label>
+                      <input type="checkbox" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-reversed"><label for="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-reversed">反転</label>
                     </span>
                   </p>
                   <p>
                     <span class="form-field-label">周波数</span>
-                    <span><input type="text" class="input-text" value="1.0" id="wave-:template-wave-id:-section-:template-section-id:-modulation-frequency">Hz</span>
+                    <span><input type="text" class="input-text" value="1.0" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-frequency">Hz</span>
                   </p>
                   <p>
                     <span class="form-field-label">影響度</span>
-                    <span><input type="text" class="input-text volume-field" value="50.0" id="wave-:template-wave-id:-section-:template-section-id:-modulation-volume">%</span>
+                    <span><input type="text" class="input-text volume-field" value="50.0" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-volume">%</span>
+                  </p>
+                </div>
+                <label for="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-enabled"><h2><input type="checkbox" class="input-checkbox" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-enabled">音量変調波</h2></label>
+                <div class="sub-section wave-section-optional-form" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-form">
+                  <p>
+                    <span class="form-field-label">種類</span>
+                    <span>
+                      <select id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-type">
+                        <option value="none">なし</option>
+                        <option value="sin" selected="selected">正弦</option>
+                        <option value="rect">矩形</option>
+                        <option value="saw">のこぎり</option>
+                        <option value="triangle">三角</option>
+                        <option value="random">ランダム</option>
+                        <option value="gear">歯車</option>
+                        <option value="snake-tongue">ヘビの舌</option>
+                        <option value="nazo">謎</option>
+                      </select>
+                      <input type="checkbox" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-reversed"><label for="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-reversed">反転</label>
+                    </span>
+                  </p>
+                  <p>
+                    <span class="form-field-label">周波数</span>
+                    <span><input type="text" class="input-text" value="1.0" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-frequency">Hz</span>
+                  </p>
+                  <p>
+                    <span class="form-field-label">影響度</span>
+                    <span><input type="text" class="input-text volume-field" value="50.0" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-volume">%</span>
                   </p>
                 </div>
                 <div class="wave-section-footer">
