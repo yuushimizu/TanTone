@@ -185,11 +185,11 @@
             return function(timeRate) {
                 return timeRate < 0.5 ? 1 : -1;
             };
-        case 'pulse-12.5':
+        case 'pulse-1/8':
             return function(timeRate) {
                 return timeRate < 0.125 ? 1 : -1;
             };
-        case 'pulse-25':
+        case 'pulse-1/4':
             return function(timeRate) {
                 return timeRate < 0.25 ? 1 : -1;
             };
@@ -205,6 +205,21 @@
             return function(timeRate) {
                 var rateInHalf = floatModulo(timeRate, 0.5);
                 return ((rateInHalf < 0.25) ? rateInHalf : (0.5 - rateInHalf)) * (timeRate < 0.5 ? 1 : -1) * 4;
+            };
+        case 'triangle-1:2':
+            return function(timeRate) {
+                var timeRateOffset = floatModulo(timeRate + (1 / 6), 1);
+                return (timeRateOffset < (1 / 3) ? (timeRateOffset * 3) : (1 - timeRateOffset) * 3 / 2) * 2 - 1;
+            };
+        case 'triangle-1:3':
+            return function(timeRate) {
+                var timeRateOffset = floatModulo(timeRate + (1 / 8), 1);
+                return (timeRateOffset < (1 / 4) ? (timeRateOffset * 4) : (1 - timeRateOffset) * 4 / 3) * 2 - 1;
+            };
+        case 'triangle-1:4':
+            return function(timeRate) {
+                var timeRateOffset = floatModulo(timeRate + (1 / 10), 1);
+                return (timeRateOffset < (1 / 5) ? (timeRateOffset * 5) : (1 - timeRateOffset) * 5 / 4) * 2 - 1;
             };
         case 'random-0':
             return randomWave(0);
