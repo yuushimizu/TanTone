@@ -156,31 +156,66 @@
         };
         addSectionForm();
     };
-    var waveFunctions = function() {
-        return {
-            'none': function(timeRate) {
+    var waveFunction = function(type) {
+        var randomWave = function(seed) {
+            var random = new MersenneTwister(seed);
+            var current = random.next() * 2 - 1;
+            var next = random.next() * 2 - 1;
+            var lastTimeRate = 0;
+            return function(timeRate) {
+                var diff = floatModulo(timeRate > lastTimeRate ? timeRate - lastTimeRate : timeRate + (1 - lastTimeRate), 1);
+                if (diff > 0.01) {
+                    current = next;
+                    next = random.next() * 2 - 1;
+                    lastTimeRate = timeRate;
+                }
+                return current + (next - current) * diff;
+            };
+        };
+        switch (type) {
+        case 'none':
+            return function(timeRate) {
                 return 0;
-            },
-            'sin': function(timeRate) {
+            };
+        case 'sin':
+            return function(timeRate) {
                 return Math.sin(timeRate * Math.PI * 2);
-            },
-            'rect': function(timeRate) {
+            };
+        case 'rect':
+            return function(timeRate) {
                 return timeRate < 0.5 ? 1 : -1;
-            },
-            'saw': function(timeRate) {
+            };
+        case 'pulse-12.5':
+            return function(timeRate) {
+                return timeRate < 0.125 ? 1 : -1;
+            };
+        case 'pulse-25':
+            return function(timeRate) {
+                return timeRate < 0.25 ? 1 : -1;
+            };
+        case 'pulse-1/3':
+            return function(timeRate) {
+                return timeRate < (1 / 3) ? 1 : -1;
+            };
+        case 'saw':
+            return function(timeRate) {
                 return (floatModulo(timeRate + 0.5, 1) * 2) - 1;
-            },
-            'triangle': function(timeRate) {
+            };
+        case 'triangle':
+            return function(timeRate) {
                 var rateInHalf = floatModulo(timeRate, 0.5);
                 return ((rateInHalf < 0.25) ? rateInHalf : (0.5 - rateInHalf)) * (timeRate < 0.5 ? 1 : -1) * 4;
-            },
-            'random': (function() {
-                var random = new MersenneTwister(0);
-                return function(timeRate) {
-                    return random.next() * 2 - 1;
-                }
-            })(),
-            'gear': function(timeRate) {
+            };
+        case 'random-0':
+            return randomWave(0);
+        case 'random-72':
+            return randomWave(72);
+        case 'random-428':
+            return randomWave(428);
+        case 'random-765':
+            return randomWave(765);
+        case 'gear':
+            return function(timeRate) {
                 var base = Math.sin(timeRate * Math.PI * 2) * 1.5;
                 if (base > 1) {
                     return 1;
@@ -189,16 +224,18 @@
                 } else {
                     return base;
                 }
-            },
-            'snake-tongue': function(timeRate) {
+            };
+        case 'snake-tongue':
+            return function(timeRate) {
                 var sin = Math.sin(timeRate * Math.PI * 2);
                 var reversedSin = Math.sin((1 - timeRate) * Math.PI * 2);
                 return (sin * 2 + reversedSin * Math.abs(reversedSin) * 1.75) * 1.75;
-            },
-            'nazo': function(timeRate) {
-                return Math.random() * 2 - 1;
-            }
-        };
+            };
+        case 'stair':
+            return function(timeRate) {
+                return Math.floor(floatModulo(timeRate - 0.5, 1) / 0.2) * 0.5 - 1;
+            };
+        }
     };
     var reverseWaveFunction = function(f) {
         return function(timeRate) {
@@ -233,20 +270,20 @@
         var volumeModulationReversed = sectionElement('volume-modulation-reversed').checked;
         var volumeModulationOffset = sectionElement('volume-modulation-offset').value / 100;
         return {
-            waveFunction: offsetWaveFunction(reversed ? reverseWaveFunction(waveFunctions()[type]) : waveFunctions()[type], offset),
+            waveFunction: offsetWaveFunction(reversed ? reverseWaveFunction(waveFunction(type)) : waveFunction(type), offset),
             alternationFunction: waveAlternationFunctions[sectionElement('alternation').value],
             length: parseFloat(sectionElement('length').value),
             frequency: parseFloat(sectionElement('frequency').value),
             volumes: [parseFloat(sectionElement('volume-0').value), parseFloat(sectionElement('volume-1').value)],
             frequencyModulation : {
                 enabled: sectionElement('frequency-modulation-enabled').checked,
-                waveFunction: offsetWaveFunction(frequencyModulationReversed ? reverseWaveFunction(waveFunctions()[frequencyModulationType]) : waveFunctions()[frequencyModulationType], frequencyModulationOffset),
+                waveFunction: offsetWaveFunction(frequencyModulationReversed ? reverseWaveFunction(waveFunction(frequencyModulationType)) : waveFunction(frequencyModulationType), frequencyModulationOffset),
                 frequency: parseFloat(sectionElement('frequency-modulation-frequency').value),
                 volume : parseFloat(sectionElement('frequency-modulation-volume').value)
             },
             volumeModulation : {
                 enabled: sectionElement('volume-modulation-enabled').checked,
-                waveFunction: offsetWaveFunction(volumeModulationReversed ? reverseWaveFunction(waveFunctions()[volumeModulationType]) : waveFunctions()[volumeModulationType], volumeModulationOffset),
+                waveFunction: offsetWaveFunction(volumeModulationReversed ? reverseWaveFunction(waveFunction(volumeModulationType)) : waveFunction(volumeModulationType), volumeModulationOffset),
                 frequency: parseFloat(sectionElement('volume-modulation-frequency').value),
                 volume : parseFloat(sectionElement('volume-modulation-volume').value)
             }
@@ -313,7 +350,7 @@
         var emptyVolumes = [];
         for (var channel = 0; channel < outputSettings.channels; ++channel) emptyVolumes[channel] = 0;
         var dummySection = copyObject(sections[sections.length - 1]);
-        dummySection.waveFunction = waveFunctions()['none'];
+        dummySection.waveFunction = waveFunction('none');
         dummySection.length = 0;
         dummySection.volumes = emptyVolumes;
         var currentSection = sections[0];
