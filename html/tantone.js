@@ -205,6 +205,11 @@
             return -f(timeRate);
         };
     };
+    var offsetWaveFunction = function(f, offset) {
+        return function(timeRate) {
+            return f(floatModulo(timeRate + offset, 1));
+        };
+    };
     var waveAlternationFunctions = {
         'keep': function(valueForCurrent, valueForNext, timeForSection) {
             return valueForCurrent;
@@ -220,31 +225,28 @@
         if (!sectionElement('enabled').checked) return null;
         var type = sectionElement('type').value;
         var reversed = sectionElement('reversed').checked;
+        var offset = sectionElement('offset').value / 100;
         var frequencyModulationType = sectionElement('frequency-modulation-type').value;
         var frequencyModulationReversed = sectionElement('frequency-modulation-reversed').checked;
+        var frequencyModulationOffset = sectionElement('frequency-modulation-offset').value / 100;
         var volumeModulationType = sectionElement('volume-modulation-type').value;
         var volumeModulationReversed = sectionElement('volume-modulation-reversed').checked;
+        var volumeModulationOffset = sectionElement('volume-modulation-offset').value / 100;
         return {
-            type: type,
-            reversed: reversed,
-            waveFunction: reversed ? reverseWaveFunction(waveFunctions()[type]) : waveFunctions()[type],
+            waveFunction: offsetWaveFunction(reversed ? reverseWaveFunction(waveFunctions()[type]) : waveFunctions()[type], offset),
             alternationFunction: waveAlternationFunctions[sectionElement('alternation').value],
             length: parseFloat(sectionElement('length').value),
             frequency: parseFloat(sectionElement('frequency').value),
             volumes: [parseFloat(sectionElement('volume-0').value), parseFloat(sectionElement('volume-1').value)],
             frequencyModulation : {
                 enabled: sectionElement('frequency-modulation-enabled').checked,
-                type: frequencyModulationType,
-                reversed: frequencyModulationReversed,
-                waveFunction: frequencyModulationReversed ? reverseWaveFunction(waveFunctions()[frequencyModulationType]) : waveFunctions()[frequencyModulationType],
+                waveFunction: offsetWaveFunction(frequencyModulationReversed ? reverseWaveFunction(waveFunctions()[frequencyModulationType]) : waveFunctions()[frequencyModulationType], frequencyModulationOffset),
                 frequency: parseFloat(sectionElement('frequency-modulation-frequency').value),
                 volume : parseFloat(sectionElement('frequency-modulation-volume').value)
             },
             volumeModulation : {
                 enabled: sectionElement('volume-modulation-enabled').checked,
-                type: volumeModulationType,
-                reversed: volumeModulationReversed,
-                waveFunction: volumeModulationReversed ? reverseWaveFunction(waveFunctions()[volumeModulationType]) : waveFunctions()[volumeModulationType],
+                waveFunction: offsetWaveFunction(volumeModulationReversed ? reverseWaveFunction(waveFunctions()[volumeModulationType]) : waveFunctions()[volumeModulationType], volumeModulationOffset),
                 frequency: parseFloat(sectionElement('volume-modulation-frequency').value),
                 volume : parseFloat(sectionElement('volume-modulation-volume').value)
             }
@@ -311,8 +313,6 @@
         var emptyVolumes = [];
         for (var channel = 0; channel < outputSettings.channels; ++channel) emptyVolumes[channel] = 0;
         var dummySection = copyObject(sections[sections.length - 1]);
-        dummySection.type = 'none';
-        dummySection.reversed = false;
         dummySection.waveFunction = waveFunctions()['none'];
         dummySection.length = 0;
         dummySection.volumes = emptyVolumes;
