@@ -31,14 +31,14 @@
         var result = [];
         for (var i = 0; i < element.childNodes.length; ++i) {
             var childNode = element.childNodes[i];
-            if (childNode instanceof Element) result.push(childNode);
+            if (childNode.nodeType == 1) result.push(childNode);
         }
         return result;
     };
     var firstChildElement = function(element) {
         for (var i = 0; i < element.childNodes.length; ++i) {
             var childNode = element.childNodes[i];
-            if (childNode instanceof Element) return childNode;
+            if (childNode.nodeType == 1) return childNode;
         }
         return null;
     };
@@ -377,7 +377,6 @@
         }
     };
     var serializeInputValues = function() {
-        console.log({output: readOutputInputValues(), waves: readWaves()});
         return serializeObject({output: readOutputInputValues(), waves: readWaves()});
     };
     var restoreInputValues = function(serialized) {
@@ -401,7 +400,6 @@
         for (var waveIndex = 0, waveCount = waves.length; waveIndex < waveCount; ++waveIndex) {
             var waveId = addWaveForm();
             var sections = waves[waveIndex].sections;
-            console.log(sections);
             var previousSectionId = undefined;
             for (var sectionIndex = 0, sectionCount = sections.length; sectionIndex < sectionCount; ++sectionIndex) {
                 var sectionId = addWaveSectionForm(waveId, previousSectionId === undefined ? undefined : findWaveSectionElement(waveId, previousSectionId));
