@@ -74,87 +74,96 @@
         }
         return null;
     };
-    var readOutputSettings = function() {
-        var samplesPerSecond = parseInt(document.getElementById('output-samples-per-second').value);
-        var channels = parseInt(radioValue(['output-channels-1', 'output-channels-2']));
-        var bytesPerSample = parseInt(radioValue(['output-bytes-per-sample-1', 'output-bytes-per-sample-2']));
+    var setRadioValue = function(ids, value) {
+        for (var i = 0, l = ids.length; i < l; ++i) {
+            var radio = document.getElementById(ids[i]);
+            radio.checked = radio.value == value ? 'checked' : '';
+        }
+    };
+    var readOutputInputValues = function() {
         return {
-            samplesPerSecond: samplesPerSecond,
-            channels: channels,
-            bytesPerSample: bytesPerSample,
-            minValue: bytesPerSample == 1 ? 0 : -(256 * 256 / 2),
-            maxValue: bytesPerSample == 1 ? 255 : (256 * 256 / 2) - 1
-         };
+            samplesPerSecond: parseInt(document.getElementById('output-samples-per-second').value),
+            channels: parseInt(radioValue(['output-channels-1', 'output-channels-2'])),
+            bytesPerSample: parseInt(radioValue(['output-bytes-per-sample-1', 'output-bytes-per-sample-2']))
+        };
+    };
+    var readOutputSettings = function() {
+        var result = readOutputInputValues();
+        result.minValue = result.bytesPerSample == 1 ? 0 : -(256 * 256 / 2);
+        result.maxValue = result.bytesPerSample == 1 ? 255 : (256 * 256 / 2) - 1
+        return result;
     };
     var findWaveElement = function(waveId, elementId) {
-        return document.getElementById('wave-' + waveId + '-' + elementId);
+        return document.getElementById('wave-' + waveId + (elementId ? '-' + elementId : ''));
     };
     var findWaveSectionElement = function(waveId, sectionId, elementId) {
-        return findWaveElement(waveId, 'section-' + sectionId + '-' + elementId);
+        return findWaveElement(waveId, 'section-' + sectionId + (elementId ? '-' + elementId : ''));
+    };
+    var nextWaveSectionId = 0;
+    var addWaveSectionForm = function(waveId, previousElement) {
+        var sectionId = nextWaveSectionId;
+        nextWaveSectionId++;
+        var sectionElement = function(elementId) {
+            return findWaveSectionElement(waveId, sectionId, elementId);
+        };
+        var clone = findWaveElement(waveId, 'section-template').cloneNode(true);
+        clone.innerHTML = clone.innerHTML.replace(/\:template\-section\-id\:/g, sectionId);
+        var element = firstChildElement(clone);
+        var parent = findWaveElement(waveId, 'sections');
+        if (previousElement) {
+            insertAfter(element, previousElement);
+            var previousSectionElement = function(elementId) {
+                return document.getElementById(previousElement.id + '-' + elementId);
+            };
+            sectionElement('length').value = 0;
+            var fieldIds = ['type', 'reversed', 'frequency', 'volume-0', 'volume-1', 'alternation', 'frequency-modulation-enabled', 'frequency-modulation-type', 'frequency-modulation-reversed', 'frequency-modulation-frequency', 'frequency-modulation-volume', 'volume-modulation-enabled', 'volume-modulation-type', 'volume-modulation-reversed', 'volume-modulation-frequency', 'volume-modulation-volume'];
+            for (var i = 0, l = fieldIds.length; i < l; ++i) {
+                var fieldId = fieldIds[i];
+                sectionElement(fieldId).value = previousSectionElement(fieldId).value;
+                sectionElement(fieldId).checked = previousSectionElement(fieldId).checked;
+            }
+            sectionElement('frequency-modulation-form').style.display = sectionElement('frequency-modulation-enabled').checked ? 'block' : 'none';
+            sectionElement('volume-modulation-form').style.display = sectionElement('volume-modulation-enabled').checked ? 'block' : 'none';
+        } else {
+            insertToFirst(parent, element);
+        }
+        sectionElement('insert').onclick = function(event) {
+            addWaveSectionForm(waveId, element);
+        };
+        sectionElement('delete').onclick = function(event) {
+            removeNode(element);
+        };
+        var frequencyModulationEnabledListener = function() {
+            sectionElement('frequency-modulation-form').style.display = this.checked ? 'block' : 'none';
+        };
+        sectionElement('frequency-modulation-enabled').onclick = frequencyModulationEnabledListener;
+        sectionElement('frequency-modulation-enabled').onchange = frequencyModulationEnabledListener;
+        var volumeModulationEnabledListener = function() {
+            sectionElement('volume-modulation-form').style.display = this.checked ? 'block' : 'none';
+        };
+        sectionElement('volume-modulation-enabled').onclick = volumeModulationEnabledListener;
+        sectionElement('volume-modulation-enabled').onchange = volumeModulationEnabledListener;
+        return sectionId;
     };
     var nextWaveId = 0;
     var addWaveForm = function() {
-        var id = nextWaveId;
+        var waveId = nextWaveId;
         nextWaveId++;
         var waveElement = function(elementId) {
-            return findWaveElement(id, elementId);
+            return findWaveElement(waveId, elementId);
         };
         var clone = document.getElementById('wave-template').cloneNode(true);
-        clone.innerHTML = clone.innerHTML.replace(/\:template\-wave\-id\:/g, id);
+        clone.innerHTML = clone.innerHTML.replace(/\:template\-wave\-id\:/g, waveId);
         var element = firstChildElement(clone);
         document.getElementById('wave-forms').appendChild(element);
         var nextSectionId = 0;
-        var addSectionForm = function(previousElement) {
-            var sectionId = nextSectionId;
-            nextSectionId++;
-            var sectionElement = function(elementId) {
-                return findWaveSectionElement(id, sectionId, elementId);
-            };
-            var clone = waveElement('section-template').cloneNode(true);
-            clone.innerHTML = clone.innerHTML.replace(/\:template\-section\-id\:/g, sectionId);
-            var element = firstChildElement(clone);
-            var parent = waveElement('sections');
-            if (previousElement) {
-                insertAfter(element, previousElement);
-                var previousSectionElement = function(elementId) {
-                    return document.getElementById(previousElement.id + '-' + elementId);
-                };
-                sectionElement('length').value = 0;
-                var fieldIds = ['type', 'reversed', 'frequency', 'volume-0', 'volume-1', 'alternation', 'frequency-modulation-enabled', 'frequency-modulation-type', 'frequency-modulation-reversed', 'frequency-modulation-frequency', 'frequency-modulation-volume', 'volume-modulation-enabled', 'volume-modulation-type', 'volume-modulation-reversed', 'volume-modulation-frequency', 'volume-modulation-volume'];
-                for (var i = 0, l = fieldIds.length; i < l; ++i) {
-                    var fieldId = fieldIds[i];
-                    sectionElement(fieldId).value = previousSectionElement(fieldId).value;
-                    sectionElement(fieldId).checked = previousSectionElement(fieldId).checked;
-                }
-                sectionElement('frequency-modulation-form').style.display = sectionElement('frequency-modulation-enabled').checked ? 'block' : 'none';
-                sectionElement('volume-modulation-form').style.display = sectionElement('volume-modulation-enabled').checked ? 'block' : 'none';
-            } else {
-                insertToFirst(parent, element);
-            }
-            sectionElement('insert').onclick = function(event) {
-                addSectionForm(element);
-            };
-            sectionElement('delete').onclick = function(event) {
-                removeNode(element);
-            };
-            var frequencyModulationEnabledListener = function() {
-                sectionElement('frequency-modulation-form').style.display = this.checked ? 'block' : 'none';
-            };
-            sectionElement('frequency-modulation-enabled').onclick = frequencyModulationEnabledListener;
-            sectionElement('frequency-modulation-enabled').onchange = frequencyModulationEnabledListener;
-            var volumeModulationEnabledListener = function() {
-                sectionElement('volume-modulation-form').style.display = this.checked ? 'block' : 'none';
-            };
-            sectionElement('volume-modulation-enabled').onclick = volumeModulationEnabledListener;
-            sectionElement('volume-modulation-enabled').onchange = volumeModulationEnabledListener;
-        }
         waveElement('add-section').onclick = function(event) {
-            addSectionForm();
+            addWaveSectionForm(waveId);
         };
         waveElement('delete').onclick = function(event) {
             removeNode(element);
         };
-        addSectionForm();
+        return waveId;
     };
     var waveFunction = function(type) {
         var randomWave = function(seed) {
@@ -274,7 +283,7 @@
         var sectionElement = function(elementId) {
             return findWaveSectionElement(waveId, sectionId, elementId);
         };
-        if (!sectionElement('enabled').checked) return null;
+        var alternation = sectionElement('alternation').value;
         var type = sectionElement('type').value;
         var reversed = sectionElement('reversed').checked;
         var offset = sectionElement('offset').value / 100;
@@ -285,19 +294,30 @@
         var volumeModulationReversed = sectionElement('volume-modulation-reversed').checked;
         var volumeModulationOffset = sectionElement('volume-modulation-offset').value / 100;
         return {
-            waveFunction: offsetWaveFunction(reversed ? reverseWaveFunction(waveFunction(type)) : waveFunction(type), offset),
-            alternationFunction: waveAlternationFunctions[sectionElement('alternation').value],
+            enabled: sectionElement('enabled').checked,
             length: parseFloat(sectionElement('length').value),
+            alternation: alternation,
+            alternationFunction: waveAlternationFunctions[alternation],
+            type: type,
+            reversed: reversed,
+            offset: offset,
+            waveFunction: offsetWaveFunction(reversed ? reverseWaveFunction(waveFunction(type)) : waveFunction(type), offset),
             frequency: parseFloat(sectionElement('frequency').value),
             volumes: [parseFloat(sectionElement('volume-0').value), parseFloat(sectionElement('volume-1').value)],
             frequencyModulation : {
                 enabled: sectionElement('frequency-modulation-enabled').checked,
+                type: frequencyModulationType,
+                reversed: frequencyModulationReversed,
+                offset: frequencyModulationOffset,
                 waveFunction: offsetWaveFunction(frequencyModulationReversed ? reverseWaveFunction(waveFunction(frequencyModulationType)) : waveFunction(frequencyModulationType), frequencyModulationOffset),
                 frequency: parseFloat(sectionElement('frequency-modulation-frequency').value),
                 volume : parseFloat(sectionElement('frequency-modulation-volume').value)
             },
             volumeModulation : {
                 enabled: sectionElement('volume-modulation-enabled').checked,
+                type: volumeModulationType,
+                reversed: volumeModulationReversed,
+                offset: volumeModulationOffset,
                 waveFunction: offsetWaveFunction(volumeModulationReversed ? reverseWaveFunction(waveFunction(volumeModulationType)) : waveFunction(volumeModulationType), volumeModulationOffset),
                 frequency: parseFloat(sectionElement('volume-modulation-frequency').value),
                 volume : parseFloat(sectionElement('volume-modulation-volume').value)
@@ -324,7 +344,99 @@
             waves.push(readWave(waveId));
         }
         return waves;
-    }
+    };
+    var serializeObject = function(object) {
+        if (object instanceof Number || typeof(object) == 'number') {
+            return String(object);
+        } else if (object instanceof Boolean || typeof(object) == 'boolean') {
+            return String(object);
+        } else if (object instanceof String || typeof(object) == 'string') {
+            return '"' + object + '"';
+        } else if (object instanceof Array || typeof(object) == 'array') {
+            var result = '';
+            for (var i = 0, l = object.length; i < l; ++i) {
+                var serialized = serializeObject(object[i]);
+                if (serialized !== undefined) {
+                    if (result.length != 0) result += ',';
+                    result += serialized;
+                }
+            }
+            return '[' + result + ']'
+        } else if (typeof(object) == 'object') {
+            var result = '';
+            for (var key in object) {
+                var serialized = serializeObject(object[key]);
+                if (serialized !== undefined) {
+                    if (result.length != 0) result += ',';
+                    result += '"' + key + '":' + serialized;
+                }
+            }
+            return '{' + result + '}';
+        } else {
+            return undefined;
+        }
+    };
+    var serializeInputValues = function() {
+        console.log({output: readOutputInputValues(), waves: readWaves()});
+        return serializeObject({output: readOutputInputValues(), waves: readWaves()});
+    };
+    var restoreInputValues = function(serialized) {
+        var values;
+        if (JSON && JSON.parse) {
+            values = JSON.parse(serialized);
+        } else {
+            try {
+                values = (new Functino("return " + serialized))();
+            } catch (e) {
+                return false;
+            }
+        }
+        if (!values) return false;
+        var output = values.output;
+        var waves = values.waves;
+        if (!output || !waves) return false;
+        document.getElementById('output-samples-per-second').value = output.samplesPerSecond || 44100;
+        setRadioValue(['output-channels-1', 'output-channels-2'], output.channels);
+        setRadioValue(['output-bytes-per-sample-1', 'output-bytes-per-sample-2'], output.bytesPerSample);
+        for (var waveIndex = 0, waveCount = waves.length; waveIndex < waveCount; ++waveIndex) {
+            var waveId = addWaveForm();
+            var sections = waves[waveIndex].sections;
+            console.log(sections);
+            var previousSectionId = undefined;
+            for (var sectionIndex = 0, sectionCount = sections.length; sectionIndex < sectionCount; ++sectionIndex) {
+                var sectionId = addWaveSectionForm(waveId, previousSectionId === undefined ? undefined : findWaveSectionElement(waveId, previousSectionId));
+                var sectionElement = function(id) {
+                    return findWaveSectionElement(waveId, sectionId, id);
+                };
+                var section = sections[sectionIndex];
+                sectionElement('enabled').checked = section.enabled ? 'checked' : '';
+                sectionElement('length').value = section.length || 0;
+                sectionElement('alternation').value = section.alternation;
+                sectionElement('type').value = section.type;
+                sectionElement('reversed').checked = section.reversed ? 'checked' : '';
+                sectionElement('offset').value = (section.offset * 100) || 0;
+                sectionElement('frequency').value = section.frequency || 1;
+                sectionElement('volume-0').value = section.volumes[0] || 0;
+                sectionElement('volume-1').value = section.volumes[1] || 0;
+                sectionElement('frequency-modulation-enabled').checked = section.frequencyModulation.enabled ? 'checked' : '';
+                sectionElement('frequency-modulation-form').style.display = section.frequencyModulation.enabled ? 'block' : 'none';
+                sectionElement('frequency-modulation-type').value = section.frequencyModulation.type;
+                sectionElement('frequency-modulation-reversed').checked = section.frequencyModulation.reversed ? 'checked' : '';
+                sectionElement('frequency-modulation-offset').value = (section.frequencyModulation.offset * 100) || 0;
+                sectionElement('frequency-modulation-frequency').value = section.frequencyModulation.frequency || 1;
+                sectionElement('frequency-modulation-volume').value = section.frequencyModulation.volume || 0;
+                sectionElement('volume-modulation-enabled').checked = section.volumeModulation.enabled ? 'checked' : '';
+                sectionElement('volume-modulation-form').style.display = section.volumeModulation.enabled ? 'block' : 'none';
+                sectionElement('volume-modulation-type').value = section.volumeModulation.type;
+                sectionElement('volume-modulation-reversed').checked = section.volumeModulation.reversed ? 'checked' : '';
+                sectionElement('volume-modulation-offset').value = (section.volumeModulation.offset * 100) || 0;
+                sectionElement('volume-modulation-frequency').value = section.volumeModulation.frequency || 1;
+                sectionElement('volume-modulation-volume').value = section.volumeModulation.volume || 0;
+                previousSectionId = sectionId;
+            }
+        }
+        return true;
+    };
     var bytesFromInt = function(value, bytes) {
         if (value == undefined || bytes == undefined || isNaN(value) || value == Infinity) throw 'Invalid value: ' + value + ' or bytes: ' + bytes;
         var intValue = Math.floor(value);
@@ -356,7 +468,10 @@
     };
     var sampleSingleWave = function(outputSettings, wave) {
         var values = emptyWave(outputSettings);
-        var sections = wave.sections;
+        var sections = [];
+        for (var i = 0, l = wave.sections.length; i < l; ++i) {
+            if (wave.sections[i].enabled) sections.push(wave.sections[i]);
+        }
         if (sections.length <= 0) return values;
         var millisecondsToSamples = function(milliseconds) {
             return Math.floor(outputSettings.samplesPerSecond * milliseconds / 1000);
@@ -365,6 +480,9 @@
         var emptyVolumes = [];
         for (var channel = 0; channel < outputSettings.channels; ++channel) emptyVolumes[channel] = 0;
         var dummySection = copyObject(sections[sections.length - 1]);
+        dummySection.type = 'none';
+        dummySection.reversed = false;
+        dummySection.offset = 0;
         dummySection.waveFunction = waveFunction('none');
         dummySection.length = 0;
         dummySection.volumes = emptyVolumes;
@@ -589,15 +707,28 @@
         document.getElementById('wave-link').href = base64;
     };
     document.getElementById('add-wave-form').onclick = function(event) {
-        addWaveForm();
+        var newWaveId = addWaveForm();
+        addWaveSectionForm(newWaveId);
         return false;
     };
     document.getElementById('form').onsubmit = function(event) {
         event.preventDefault();
         makeWave();
+        location.hash = encodeURIComponent(serializeInputValues());
         return false;
     };
-    addWaveForm();
-    findWaveSectionElement(0, 0, 'length').value = '1000.0';
+    var initializeWaves = function() {
+        var waveId = addWaveForm();
+        var sectionId = addWaveSectionForm(waveId);
+        findWaveSectionElement(waveId, sectionId, 'length').value = '1000.0';
+    };
+    if (location.hash != '') {
+        try {
+            restoreInputValues(decodeURIComponent(location.hash.replace(/^\#/, '')));
+        } catch (e) {
+        }
+    } else {
+        initializeWaves();
+    }
     resetCanvases();
 })();
