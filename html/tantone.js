@@ -1,9 +1,6 @@
 (function() {
     var floatModulo = function(n, m) {
-        var positive = n >= 0;
-        var result = Math.abs(n);
-        while (result >= m) result -= m;
-        return positive ? result : -result;
+        return n - Math.floor(n / m) * m;
     };
     var copyObject = function(object) {
         var result = {};
@@ -291,13 +288,15 @@
     };
     var waveModulator = function(modulation) {
         var timeInLoop = 0;
+        var currentValue = modulation.waveFunction(0);
         return {
             modulate: function(source) {
                 if (!modulation.enabled) return source;
-                return source + source * modulation.waveFunction(timeInLoop) * modulation.volume / 100;
+                return source + source * currentValue * modulation.volume / 100;
             },
             addMilliseconds: function(milliseconds) {
                 timeInLoop = floatModulo(timeInLoop + modulation.frequency * milliseconds / 1000, 1);
+                if (modulation.enabled) currentValue = modulation.waveFunction(timeInLoop);
             }
         };
     };
@@ -342,6 +341,7 @@
                     nextSection = dummySection;
                 }
                 nextFrequencyModulator = waveModulator(nextSection.frequencyModulation);
+                
                 nextVolumeModulator = waveModulator(nextSection.volumeModulation);
             }
             var baseValueForCurrentSection = currentSection.waveFunction(currentTimeForWaveLoop);
