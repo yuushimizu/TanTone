@@ -202,7 +202,7 @@
     };
     var reverseWaveFunction = function(f) {
         return function(timeRate) {
-            return f(1 - timeRate);
+            return -f(timeRate);
         };
     };
     var waveAlternationFunctions = {
