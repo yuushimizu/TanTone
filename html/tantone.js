@@ -173,7 +173,7 @@
             var lastTimeRate = 0;
             return function(timeRate) {
                 var diff = floatModulo(timeRate > lastTimeRate ? timeRate - lastTimeRate : timeRate + (1 - lastTimeRate), 1);
-                if (diff > 0.01) {
+                if (diff > 0.015) {
                     current = next;
                     next = random.next() * 2 - 1;
                     lastTimeRate = timeRate;
