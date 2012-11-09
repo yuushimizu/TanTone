@@ -3,7 +3,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>TanTone</title>
     <meta name="description" content="ブラウザ上で音を作れるサイト">
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="./style.css">
   </head>
   <body>
     <form id="form">
@@ -33,12 +33,18 @@
         <div class="template" id="wave-template">
           <div class="wave-form" id="wave-:template-wave-id:">
             <div class="wave-header">
-              <p><a href="javascript:void(0)" id="wave-:template-wave-id:-add-section"><img class="icon" src="./images/icon-left.png">先頭にセクションを追加</a></p>
+              <p>
+                <a href="javascript:void(0)" id="wave-:template-wave-id:-add-section"><img class="icon" src="./images/icon-left.png">先頭にセクションを追加</a>
+                <a href="javascript:void(0)" id="wave-:template-wave-id:-delete"><img class="icon" src="./images/icon-delete.png">削除</a>
+              </p>
             </div>
             <div class="template" id="wave-:template-wave-id:-section-template">
               <div class="wave-section-form" id="wave-:template-wave-id:-section-:template-section-id:">
                 <div class="wave-section-header">
-                  <p><a href="javascript:void(0)" id="wave-:template-wave-id:-section-:template-section-id:-insert">右にセクションを追加<img class="icon" src="./images/icon-right.png"></a></p>
+                  <p>
+                    <a href="javascript:void(0)" id="wave-:template-wave-id:-section-:template-section-id:-insert"><img class="icon" src="./images/icon-right.png">右にセクションを追加</a>
+                    <a href="javascript:void(0)" id="wave-:template-wave-id:-section-:template-section-id:-delete"><img class="icon" src="./images/icon-delete.png">削除</a>
+                  </p>
                 </div>
                 <div class="sub-section">
                   <p>
@@ -79,7 +85,7 @@
                         <option value="random-428">ランダム(428)</option>
                         <option value="random-765">ランダム(765)</option>
                         <option value="gear">歯車</option>
-                        <option value="snake-tongue">ヘビの舌</option>
+                         <option value="snake-tongue">ヘビの舌</option>
                         <option value="stair">階段</option>
                       </select>
                       <input type="checkbox" id="wave-:template-wave-id:-section-:template-section-id:-reversed"><label for="wave-:template-wave-id:-section-:template-section-id:-reversed">反転</label>
@@ -181,15 +187,9 @@
                     <span><input type="text" class="input-text volume-field" value="50.0" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-volume">%</span>
                   </p>
                 </div>
-                <div class="wave-section-footer">
-                  <p><a href="javascript:void(0)" id="wave-:template-wave-id:-section-:template-section-id:-delete"><img class="icon" src="./images/icon-delete.png">削除</a></p>
-                </div>
               </div>
             </div>
             <div class="wave-section-forms" id="wave-:template-wave-id:-sections">
-            </div>
-            <div class="wave-footer">
-              <p><a href="javascript:void(0)" id="wave-:template-wave-id:-delete"><img class="icon" src="./images/icon-delete.png">削除</a></p>
             </div>
           </div>
         </div>
@@ -201,12 +201,10 @@
       <div class="section result">
         <p>
           <input type="submit" class="input-submit" value="作成">
+          <audio controls="controls" id="audio"></audio>
           <a href="javascript:void(0)" target="_blank" id="wave-link">できあがったWAVEファイルへのリンク<img class="icon" src="./images/icon-file.png"></a>
         </p>
-        <h2>再生</h2>
-        <div class="sub-section">
-          <p><audio controls="controls" id="audio"></audio></p>
-        </div>
+        <p class="note">編集中の状態は作成ボタンを押した後にブックマークすれば保存できます。</p>
         <h2>波形</h2>
         <div class="sub-section">
           <p><canvas width="960" height="120" id="wave-canvas"></canvas></p>
@@ -214,6 +212,9 @@
         </div>
       </div>
     </form>
+    <div class="section">
+      <p><a href="./help/">ヘルプ</a></p>
+    </div>
     <script type="text/javascript" src="./mt.js"></script>
     <script type="text/javascript" src="./tantone.js"></script>
   </body>

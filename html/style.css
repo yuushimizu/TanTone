@@ -1,6 +1,7 @@
 * {
     padding: 0;
     margin: 0;
+    vertical-align: middle;
 }
 
 img {
@@ -11,7 +12,7 @@ body {
     text-align: left;
     font-family: monospace;
     font-size: 0.9em;
-    padding-bottom: 3em;
+    padding-bottom: 0.5em;
     background-image: url("./images/background.png");
 }
 
@@ -34,8 +35,7 @@ h1 {
     background-color: #124;
     color: #eef;
     padding: 0.2em;
-    padding-left: 0.5em;
-    margin-bottom: 0.5em;
+    padding-left: 0.25em;
 }
 
 h1 img.icon {
@@ -50,7 +50,7 @@ h2 {
     background-color: #235;
     color: #eef;
     padding: 0.2em;
-    padding-left: 0.5em;
+    padding-left: 0.25em;
 }
 
 h3 {
@@ -58,26 +58,32 @@ h3 {
     background-color: #346;
     color: #eef;
     padding: 0.2em;
-    padding-left: 0.5em;
+    padding-left: 0.25em;
+}
+
+h4 {
+    font-size: 1em;
+    font-weigh: bold;
+    color: #124;
+    margin-top: 1em;
 }
 
 .section {
-    margin-left: 2em;
-    margin-bottom: 1em;
+    padding: 0.25em 0 0.25em 1em;
 }
 
 .sub-section {
-    padding: 1em;
+    padding: 0.25em;
 }
 
 .form-field-label {
-    margin-right: 2em;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
+    margin-right: 1em;
+    margin-top: 0.1em;
+    margin-bottom: 0.1em;
 }
 
 .input-text {
-    padding: 0.2em;
+    padding: 0.1em;
     margin-right: 0.2em;
     width: 5em;
 }
@@ -92,9 +98,8 @@ h3 {
     font-size: 1em;
     padding-left: 3em;
     padding-right: 3em;
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
-    margin-bottom: 1em;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
 }
 
 .radio-label {
@@ -104,7 +109,12 @@ h3 {
 
 .output-settings .form-field-label {
     display: inline-block;
-    width: 10em;
+    font-weight: bold;
+}
+
+.output-settings p {
+    display: inline-block;
+    margin-right: 6em;
 }
 
 #wave-link {
@@ -118,19 +128,22 @@ h3 {
 
 .wave-form {
     background-color: #eef;
-    padding: 1em;
-    padding-right: 3em;
+    padding: 0.25em;
     border: solid 1px #235;
     border-top: solid 1em #235;
 }
 
-.wave-footer {
-    text-align: right;
+.wave-settings {
+    background-color: rgba(192, 192, 192, 0.1);
 }
 
 #wave-forms {
-    margin-bottom: 1em;
-    margin-right: 2em;
+    margin-bottom: 0.25em;
+    margin-right: 1em;
+}
+
+.wave-header a {
+    margin-right: 1em;
 }
 
 .wave-section-forms {
@@ -139,13 +152,11 @@ h3 {
 }
 
 .wave-section-form {
-    width: 25em;
+    width: 23em;
     display: inline-block;
     vertical-align: top;
-    margin-top: 1em;
-    margin-bottom: 1em;
-    padding-top: 1em;
-    padding-bottom: 1em;
+    margin-top: 0.25em;
+    padding-top: 0.25em;
     border: solid 1px #346;
     border-top: solid 1em #346;
     background-color: #fff;
@@ -161,25 +172,42 @@ h3 {
 }
 
 .wave-section-header {
-    text-align: right;
-    padding-bottom: 1em;
-    padding-left: 1em;
-    padding-right: 1em;
+    padding-bottom: 0.25em;
     border-bottom: solid 1px #346;
 }
 
-.wave-section-footer {
-    text-align: right;
-    padding-top: 1em;
-    padding-left: 1em;
-    padding-right: 1em;
-    border-top: solid 1px #346;
+.wave-section-header a {
+    margin-right: 1em;
 }
 
 .template {
     display: none;
 }
 
+audio {
+    margin-left: 1em;
+}
+
 canvas {
-    margin-bottom: 1em;
+    margin-bottom: 0.25em;
+}
+
+.note {
+    color: #c64;
+    font-weight: bold;
+}
+
+.screenshot {
+    margin: 1em;
+    border: solid 1px #346;
+}
+
+.help .section {
+    padding: 1em;
+    padding-right: 0;
+}
+
+.help .sub-section {
+    padding: 1em;
+    padding-right: 0;
 }
