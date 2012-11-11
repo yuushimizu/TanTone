@@ -623,7 +623,7 @@
         var yCenter = height / 2;
         context.beginPath();
         context.strokeStyle = 'rgba(128, 128, 128, 255)';
-        context.lineWidth = 0.75;
+        context.lineWidth = 1;
         context.moveTo(0, yCenter);
         context.lineTo(width, yCenter);
         context.stroke();
@@ -656,7 +656,7 @@
         if (!outputSettings) return;
         var width = context.canvas.width;
         var height = context.canvas.height;
-        context.lineWidth = 0.75;
+        context.lineWidth = 1;
         for (var channel = 0; channel < outputSettings.channels; ++channel) {
             context.strokeStyle = waveStrokeStyles[channel];
             drawSingleChannelFullWave(context, outputSettings, samples[channel]);
@@ -681,14 +681,14 @@
             return context.getImageData(0, 0, context.canvas.width, context.canvas.height);
         };
     })();
-    var drawSingleChannelScaledWave = function(context, outputSettings, samples, middleMillisecond) {
+    var drawSingleChannelScaledWave = function(context, outputSettings, samples, drawMilliseconds, middleMillisecond) {
         var width = context.canvas.width;
         var height = context.canvas.height;
         var yCenter = height / 2;
         var lengthMilliseconds = samples.length * 1000 / outputSettings.samplesPerSecond;
-        var offsetSamples = middleMillisecond < 50 ? 0 : (samples.length * Math.min(middleMillisecond - 50, lengthMilliseconds - 100) / lengthMilliseconds);
+        var offsetSamples = middleMillisecond < (drawMilliseconds / 2) ? 0 : (samples.length * Math.min(middleMillisecond - (drawMilliseconds / 2), lengthMilliseconds - drawMilliseconds) / lengthMilliseconds);
         var calcY = function(x) {
-            return yCenter - yCenter * samples[Math.floor(offsetSamples + (outputSettings.samplesPerSecond / 10) * x / width)];
+            return yCenter - yCenter * samples[Math.floor(offsetSamples + (outputSettings.samplesPerSecond * drawMilliseconds / 1000) * x / width)];
         };
         context.beginPath();
         for (var x = 0; x < width; ++ x) {
@@ -696,25 +696,25 @@
         }
         context.stroke();
     };
-    var drawScaledWave = function(context, outputSettings, samples, middleMillisecond) {
+    var drawScaledWave = function(context, outputSettings, samples, drawMilliseconds, middleMillisecond) {
         resetCanvas(context);
         if (!outputSettings) return;
         var width = context.canvas.width;
         var height = context.canvas.height;
-        context.lineWidth = 0.75;
+        context.lineWidth = 1;
         for (var channel = 0; channel < outputSettings.channels; ++channel) {
             context.strokeStyle = waveStrokeStyles[channel];
-            drawSingleChannelScaledWave(context, outputSettings, samples[channel], middleMillisecond);
+            drawSingleChannelScaledWave(context, outputSettings, samples[channel], drawMilliseconds, middleMillisecond);
         }
         context.fillStyle = 'rgba(255, 255, 255, 255)';
         context.textBaseline = 'top';
         context.font = Math.floor(height * 0.1) + 'px';
-        var startMillisecond = Math.floor(middleMillisecond < 50 ? 0 : Math.min(middleMillisecond - 50, samples[0].length * 1000 / outputSettings.samplesPerSecond - 100));
+        var startMillisecond = Math.floor(middleMillisecond < (drawMilliseconds / 2) ? 0 : Math.min(middleMillisecond - (drawMilliseconds / 2), samples[0].length * 1000 / outputSettings.samplesPerSecond - drawMilliseconds));
         var textMargin = width * 0.005;
         context.textAlign = 'left';
         context.fillText(startMillisecond + ' ms', textMargin, textMargin);
         context.textAlign = 'right';
-        context.fillText((startMillisecond + 100) + ' ms', width - textMargin, textMargin);
+        context.fillText((startMillisecond + drawMilliseconds) + ' ms', width - textMargin, textMargin);
     };
     var fullWaveImage = null;
     var redrawWaveImages = function(outputSettings, samples) {
@@ -722,14 +722,19 @@
         fullWaveImage = createFullWaveImage(outputSettings, samples);
         var scaledWaveCanvas = document.getElementById('wave-canvas-scaled');
         var scaledWaveContext = scaledWaveCanvas.getContext('2d');
-        drawScaledWave(scaledWaveContext, outputSettings, samples, 0);
+        drawScaledWave(scaledWaveContext, outputSettings, samples, 100, 0);
+        var moreScaledWaveCanvas = document.getElementById('wave-canvas-scaled-more');
+        var moreScaledWaveContext = moreScaledWaveCanvas.getContext('2d');
+        drawScaledWave(moreScaledWaveContext, outputSettings, samples, 20, 0);
         if (!outputSettings) return;
         var length = samples[0].length * 1000 / outputSettings.samplesPerSecond;
         var listener = function(event) {
-            drawScaledWave(scaledWaveContext, outputSettings, samples, length * event.offsetX / this.width);
+            drawScaledWave(scaledWaveContext, outputSettings, samples, 100, length * event.offsetX / this.clientWidth);
+            drawScaledWave(moreScaledWaveContext, outputSettings, samples, 20, length * event.offsetX / this.clientWidth);
         };
         fullWaveCanvas.onmousemove = listener;
         scaledWaveCanvas.onmousemove = listener;
+        moreScaledWaveCanvas.onmousemove = listener;
     };
     var makeWave = function() {
         var outputSettings = readOutputSettings();
@@ -777,7 +782,7 @@
             var duration = audio.duration;
             var currentTime = audio.currentTime;
             if (duration !== undefined && !isNaN(duration) && currentTime !== undefined && !isNaN(currentTime)) {
-                context.lineWidth = 0.75;
+                context.lineWidth = 1;
                 context.strokeStyle = 'rgb(192, 128, 32)';
                 context.beginPath();
                 var x = width * currentTime / duration;

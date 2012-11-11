@@ -1,6 +1,7 @@
 * {
     padding: 0;
     margin: 0;
+    text-align: left;
     vertical-align: middle;
 }
 
@@ -8,12 +9,18 @@ img {
     border: none;
 }
 
+html {
+    height: 100%;
+}
+
 body {
-    text-align: left;
+    height: 100%;
+    text-align: center;
     font-family: monospace;
     font-size: 0.9em;
-    padding-bottom: 0.5em;
-    background-image: url("./images/background.png");
+    background-color: #012;
+    overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 p img.icon {
@@ -34,8 +41,7 @@ h1 {
     font-size: 1.3em;
     background-color: #124;
     color: #eef;
-    padding: 0.2em;
-    padding-left: 0.25em;
+    padding: 0.25em;
 }
 
 h1 img.icon {
@@ -49,42 +55,27 @@ h2 {
     font-size: 1em;
     background-color: #235;
     color: #eef;
-    padding: 0.2em;
-    padding-left: 0.25em;
+    padding: 0.25em;
 }
 
 h3 {
     font-size: 1em;
     background-color: #346;
     color: #eef;
-    padding: 0.2em;
-    padding-left: 0.25em;
+    padding: 0.25em;
 }
 
 h4 {
     font-size: 1em;
     font-weigh: bold;
     color: #124;
-    margin-top: 1em;
 }
 
-.section {
-    padding: 0.25em 0 0.25em 1em;
-}
-
-.sub-section {
-    padding: 0.25em;
-}
-
-.form-field-label {
-    margin-right: 1em;
-    margin-top: 0.1em;
-    margin-bottom: 0.1em;
+.section-content {
+    padding: 1em;
 }
 
 .input-text {
-    padding: 0.1em;
-    margin-right: 0.2em;
     width: 5em;
 }
 
@@ -96,75 +87,79 @@ h4 {
     background-color: #f53;
     color: #fef;
     font-size: 1em;
-    padding-left: 3em;
-    padding-right: 3em;
-    padding-top: 0.25em;
-    padding-bottom: 0.25em;
+    padding: 0.5em 4em 0.5em 4em;
 }
 
-.radio-label {
-    margin-left: 0.2em;
-    margin-right: 1em;
+.radio-label, .checkbox-label {
+    padding-left: 0.25em;
 }
 
-.output-settings .form-field-label {
-    display: inline-block;
-    font-weight: bold;
-}
-
-.output-settings p {
-    display: inline-block;
-    margin-right: 6em;
-}
-
-#wave-link {
-    margin-left: 1em;
-    font-size: 1em;
-}
-
-#wave-base64 {
+#form {
     width: 100%;
+    background-image: url("./images/background.png");
+    margin-left: auto;
+    margin-top: auto;
+}
+
+#wave-menu {
+    float: left;
+    width: 100%;
+    margin-right: -40em;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+#wave-menu > * {
+    margin-right: 40em;
 }
 
 .wave-form {
     background-color: #eef;
-    padding: 0.25em;
     border: solid 1px #235;
     border-top: solid 1em #235;
 }
 
-.wave-settings {
-    background-color: rgba(192, 192, 192, 0.1);
+.wave-settings-footer {
+    height: 1em;
 }
 
-#wave-forms {
-    margin-bottom: 0.25em;
-    margin-right: 1em;
+.wave-header {
+    padding: 0.5em;
 }
 
 .wave-header a {
-    margin-right: 1em;
+    margin-right: 3em;
 }
 
 .wave-section-forms {
-    overflow-x: auto;
+    overflow-x: scroll;
     white-space: nowrap;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 .wave-section-form {
     width: 23em;
     display: inline-block;
     vertical-align: top;
-    margin-top: 0.25em;
-    padding-top: 0.25em;
     border: solid 1px #346;
     border-top: solid 1em #346;
     background-color: #fff;
 }
 
+.wave-section-form .sub-section {
+    padding-left: 0.25em;
+}
+
+.wave-section-form .sub-section p {
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+}
+
 .wave-section-form .form-field-label {
     display: inline-block;
-    width: 4em;
+    width: 5em;
 }
 
 .wave-section-optional-form {
@@ -172,24 +167,54 @@ h4 {
 }
 
 .wave-section-header {
-    padding-bottom: 0.25em;
     border-bottom: solid 1px #346;
+    padding: 0.25em;
 }
 
 .wave-section-header a {
-    margin-right: 1em;
+    margin-right: 3em;
 }
 
 .template {
     display: none;
 }
 
-audio {
-    margin-left: 1em;
+#output-menu {
+    height: 100%;
+    float: left;
+    width: 40em;
+    position: relative;
+    z-index: 2;
+}
+
+.output-settings .form-field-label {
+    display: inline-block;
+    width: 11em;
+}
+
+.output-settings .section-content {
+    border-left: solid 1px #124;
+}
+
+.output-settings p {
+    padding-bottom: 1em;
+}
+
+.output-result .section-content {
+    height: 100%;
+    border-left: solid 1px #124;
+}
+
+.output-result p {
+    padding-bottom: 1em;
+}
+
+#wave-link {
+    font-size: 1em;
 }
 
 canvas {
-    margin-bottom: 0.25em;
+    width: 100%;
 }
 
 .note {
@@ -197,7 +222,12 @@ canvas {
     font-weight: bold;
 }
 
-.screenshot {
+#footer {
+    width: 100%;
+    clear: both;
+}
+
+.help .screenshot {
     margin: 1em;
     border: solid 1px #346;
 }

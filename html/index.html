@@ -7,214 +7,221 @@
   </head>
   <body>
     <form id="form">
-      <h1>出力設定<img class="icon" src="./images/icon-jerryfish.png"></h1>
-      <div class="section output-settings">
-        <p>
-          <span class="form-field-label">サンプリングレート</span>
-          <span><input type="text" class="input-text" value="44100" id="output-samples-per-second">Hz</span>
-        </p>
-        <p>
-          <span class="form-field-label">チャンネル数</span>
-          <span>
-            <input type="radio" class="input-radio" name="output-channels" value="1" id="output-channels-1"><label for="output-channels-1" class="radio-label">モノラル</label>
-            <input type="radio" class="input-radio" name="output-channels" value="2" id="output-channels-2" checked="checked"><label for="output-channels-2" class="radio-label">ステレオ</label>
-          </span>
-        </p>
-        <p>
-          <span class="form-field-label">サンプリングサイズ</span>
-          <span>
-            <input type="radio" class="input-radio" name="output-bytes-per-sample" value="1" id="output-bytes-per-sample-1"><label for="output-bytes-per-sample-1" class="radio-label">8ビット</label>
-            <input type="radio" class="input-radio" name="output-bytes-per-sample" value="2" id="output-bytes-per-sample-2" checked="checked"><label for="output-bytes-per-sample-2" class="radio-label">16ビット</label>
-          </span>
-        </p>
-      </div>
-      <h1>波形設定<img class="icon" src="./images/icon-snake.png"></h1>
-      <div class="section wave-settings">
-        <div class="template" id="wave-template">
-          <div class="wave-form" id="wave-:template-wave-id:">
-            <div class="wave-header">
-              <p>
-                <a href="javascript:void(0)" id="wave-:template-wave-id:-add-section"><img class="icon" src="./images/icon-left.png">先頭にセクションを追加</a>
-                <a href="javascript:void(0)" id="wave-:template-wave-id:-delete"><img class="icon" src="./images/icon-delete.png">削除</a>
-              </p>
-            </div>
-            <div class="template" id="wave-:template-wave-id:-section-template">
-              <div class="wave-section-form" id="wave-:template-wave-id:-section-:template-section-id:">
-                <div class="wave-section-header">
+      <div id="wave-menu">
+        <div class="section wave-settings">
+          <h1>波形設定<img class="icon" src="./images/icon-snake.png"></h1>
+          <div class="section-content">
+            <div class="template" id="wave-template">
+              <div class="wave-form" id="wave-:template-wave-id:">
+                <div class="wave-header">
                   <p>
-                    <a href="javascript:void(0)" id="wave-:template-wave-id:-section-:template-section-id:-insert"><img class="icon" src="./images/icon-right.png">右にセクションを追加</a>
-                    <a href="javascript:void(0)" id="wave-:template-wave-id:-section-:template-section-id:-delete"><img class="icon" src="./images/icon-delete.png">削除</a>
+                    <a href="javascript:void(0)" id="wave-:template-wave-id:-add-section"><img class="icon" src="./images/icon-left.png">先頭にセクションを追加</a>
+                    <a href="javascript:void(0)" id="wave-:template-wave-id:-delete"><img class="icon" src="./images/icon-delete.png">削除</a>
                   </p>
                 </div>
-                <div class="sub-section">
-                  <p>
-                    <span class="form-field-label"><label for="wave-:template-wave-id:-section-:template-section-id:-enabled">有効</label></span>
-                    <span><input type="checkbox" class="input-checkbox" id="wave-:template-wave-id:-section-:template-section-id:-enabled" checked="checked"></span></p>
-                  <p>
-                    <span class="form-field-label">長さ</span>
-                    <span><input type="text" class="input-text" value="0.0" id="wave-:template-wave-id:-section-:template-section-id:-length">ミリ秒</span></p>
-                  <p>
-                    <span class="form-field-label">移行方法</span>
-                    <span>
-                      <select id="wave-:template-wave-id:-section-:template-section-id:-alternation">
-                        <option value="keep" selected="selected">そのまま</option>
-                        <option value="average">だんだん次へ</option>
-                      </select>
-                    </span>
-                  </p>
+                <div class="template" id="wave-:template-wave-id:-section-template">
+                  <div class="wave-section-form" id="wave-:template-wave-id:-section-:template-section-id:">
+                    <div class="wave-section-header">
+                      <p>
+                        <a href="javascript:void(0)" id="wave-:template-wave-id:-section-:template-section-id:-insert"><img class="icon" src="./images/icon-right.png">右にセクションを追加</a>
+                        <a href="javascript:void(0)" id="wave-:template-wave-id:-section-:template-section-id:-delete"><img class="icon" src="./images/icon-delete.png">削除</a>
+                      </p>
+                    </div>
+                    <div class="sub-section">
+                      <p>
+                        <span class="form-field-label"><label for="wave-:template-wave-id:-section-:template-section-id:-enabled">有効</label></span>
+                        <span><input type="checkbox" class="input-checkbox" id="wave-:template-wave-id:-section-:template-section-id:-enabled" checked="checked"></span></p>
+                      <p>
+                        <span class="form-field-label">長さ</span>
+                        <span><input type="text" class="input-text" value="0.0" id="wave-:template-wave-id:-section-:template-section-id:-length">ミリ秒</span></p>
+                      <p>
+                        <span class="form-field-label">移行方法</span>
+                        <span>
+                          <select id="wave-:template-wave-id:-section-:template-section-id:-alternation">
+                            <option value="keep" selected="selected">そのまま</option>
+                            <option value="average">だんだん次へ</option>
+                          </select>
+                        </span>
+                      </p>
+                    </div>
+                    <h2>基本波</h2>
+                    <div class="sub-section">
+                      <p>
+                        <span class="form-field-label">種類</span>
+                        <span>
+                          <select id="wave-:template-wave-id:-section-:template-section-id:-type">
+                            <option value="none">なし</option>
+                            <option value="sin" selected="selected">正弦</option>
+                            <option value="pulse-1/8">1/8 パルス</option>
+                            <option value="pulse-1/4">1/4 パルス</option>
+                            <option value="pulse-1/3">1/3 パルス</option>
+                            <option value="rect">矩形</option>
+                            <option value="saw">のこぎり</option>
+                            <option value="triangle">三角</option>
+                            <option value="triangle-1:2">1:2 三角</option>
+                            <option value="triangle-1:3">1:3 三角</option>
+                            <option value="triangle-1:4">1:4 三角</option>
+                            <option value="random-0">ランダム(0)</option>
+                            <option value="random-72">ランダム(72)</option>
+                            <option value="random-428">ランダム(428)</option>
+                            <option value="random-765">ランダム(765)</option>
+                            <option value="gear">歯車</option>
+                            <option value="snake-tongue">ヘビの舌</option>
+                            <option value="stair">階段</option>
+                          </select>
+                          <input type="checkbox" id="wave-:template-wave-id:-section-:template-section-id:-reversed"><label class="checkbox-label" for="wave-:template-wave-id:-section-:template-section-id:-reversed">反転</label>
+                        </span>
+                      </p>
+                      <p>
+                        <span class="form-field-label">オフセット</span>
+                        <span><input type="text" class="input-text" value="0" id="wave-:template-wave-id:-section-:template-section-id:-offset">%</span>
+                      </p>
+                      <p>
+                        <span class="form-field-label">周波数</span>
+                        <span><input type="text" class="input-text" value="440.0" id="wave-:template-wave-id:-section-:template-section-id:-frequency">Hz</span>
+                      </p>
+                      <p>
+                        <span class="form-field-label">音量</span>
+                        <span>左/モノラル<input type="text" class="input-text volume-field" value="25.0" id="wave-:template-wave-id:-section-:template-section-id:-volume-0">%</span>
+                        <span>右<input type="text" class="input-text volume-field" value="25.0" id="wave-:template-wave-id:-section-:template-section-id:-volume-1">%</span>
+                      </p>
+                    </div>
+                    <label for="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-enabled"><h2><input type="checkbox" class="input-checkbox" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-enabled"><span class="checkbox-label">周波数変調波</span></h2></label>
+                    <div class="sub-section wave-section-optional-form" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-form">
+                      <p>
+                        <span class="form-field-label">種類</span>
+                        <span>
+                          <select id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-type">
+                            <option value="none">なし</option>
+                            <option value="sin" selected="selected">正弦</option>
+                            <option value="pulse-1/8">1/8 パルス</option>
+                            <option value="pulse-1/4">1/4 パルス</option>
+                            <option value="pulse-1/3">1/3 パルス</option>
+                            <option value="rect">矩形</option>
+                            <option value="saw">のこぎり</option>
+                            <option value="triangle">三角</option>
+                            <option value="triangle-1:2">1:2 三角</option>
+                            <option value="triangle-1:3">1:3 三角</option>
+                            <option value="triangle-1:4">1:4 三角</option>
+                            <option value="random-0">ランダム(0)</option>
+                            <option value="random-72">ランダム(72)</option>
+                            <option value="random-428">ランダム(428)</option>
+                            <option value="random-765">ランダム(765)</option>
+                            <option value="gear">歯車</option>
+                            <option value="snake-tongue">ヘビの舌</option>
+                            <option value="stair">階段</option>
+                          </select>
+                          <input type="checkbox" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-reversed"><label class="checkbox-label" for="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-reversed">反転</label>
+                        </span>
+                      </p>
+                      <p>
+                        <span class="form-field-label">オフセット</span>
+                        <span><input type="text" class="input-text" value="0" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-offset">%</span>
+                      </p>
+                      <p>
+                        <span class="form-field-label">周波数</span>
+                        <span><input type="text" class="input-text" value="1.0" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-frequency">Hz</span>
+                      </p>
+                      <p>
+                        <span class="form-field-label">影響度</span>
+                        <span><input type="text" class="input-text volume-field" value="50.0" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-volume">%</span>
+                      </p>
+                    </div>
+                    <label for="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-enabled"><h2><input type="checkbox" class="input-checkbox" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-enabled"><span class="checkbox-label">音量変調波</span></h2></label>
+                    <div class="sub-section wave-section-optional-form" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-form">
+                      <p>
+                        <span class="form-field-label">種類</span>
+                        <span>
+                          <select id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-type">
+                            <option value="none">なし</option>
+                            <option value="sin" selected="selected">正弦</option>
+                            <option value="pulse-1/8">1/8 パルス</option>
+                            <option value="pulse-1/4">1/4 パルス</option>
+                            <option value="pulse-1/3">1/3 パルス</option>
+                            <option value="rect">矩形</option>
+                            <option value="saw">のこぎり</option>
+                            <option value="triangle">三角</option>
+                            <option value="triangle-1:2">1:2 三角</option>
+                            <option value="triangle-1:3">1:3 三角</option>
+                            <option value="triangle-1:4">1:4 三角</option>
+                            <option value="random-0">ランダム(0)</option>
+                            <option value="random-72">ランダム(72)</option>
+                            <option value="random-428">ランダム(428)</option>
+                            <option value="random-765">ランダム(765)</option>
+                            <option value="gear">歯車</option>
+                            <option value="snake-tongue">ヘビの舌</option>
+                            <option value="stair">階段</option>
+                          </select>
+                          <input type="checkbox" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-reversed"><label class="checkbox-label" for="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-reversed">反転</label>
+                        </span>
+                      </p>
+                      <p>
+                        <span class="form-field-label">オフセット</span>
+                        <span><input type="text" class="input-text" value="0" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-offset">%</span>
+                      </p>
+                      <p>
+                        <span class="form-field-label">周波数</span>
+                        <span><input type="text" class="input-text" value="1.0" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-frequency">Hz</span>
+                      </p>
+                      <p>
+                        <span class="form-field-label">影響度</span>
+                        <span><input type="text" class="input-text volume-field" value="50.0" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-volume">%</span>
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <h2>基本波</h2>
-                <div class="sub-section">
-                  <p>
-                    <span class="form-field-label">種類</span>
-                    <span>
-                      <select id="wave-:template-wave-id:-section-:template-section-id:-type">
-                        <option value="none">なし</option>
-                        <option value="sin" selected="selected">正弦</option>
-                        <option value="pulse-1/8">1/8 パルス</option>
-                        <option value="pulse-1/4">1/4 パルス</option>
-                        <option value="pulse-1/3">1/3 パルス</option>
-                        <option value="rect">矩形</option>
-                        <option value="saw">のこぎり</option>
-                        <option value="triangle">三角</option>
-                        <option value="triangle-1:2">1:2 三角</option>
-                        <option value="triangle-1:3">1:3 三角</option>
-                        <option value="triangle-1:4">1:4 三角</option>
-                        <option value="random-0">ランダム(0)</option>
-                        <option value="random-72">ランダム(72)</option>
-                        <option value="random-428">ランダム(428)</option>
-                        <option value="random-765">ランダム(765)</option>
-                        <option value="gear">歯車</option>
-                         <option value="snake-tongue">ヘビの舌</option>
-                        <option value="stair">階段</option>
-                      </select>
-                      <input type="checkbox" id="wave-:template-wave-id:-section-:template-section-id:-reversed"><label for="wave-:template-wave-id:-section-:template-section-id:-reversed">反転</label>
-                    </span>
-                  </p>
-                  <p>
-                    <span class="form-field-label">オフセット</span>
-                    <span><input type="text" class="input-text" value="0" id="wave-:template-wave-id:-section-:template-section-id:-offset">%</span>
-                  </p>
-                  <p>
-                    <span class="form-field-label">周波数</span>
-                    <span><input type="text" class="input-text" value="440.0" id="wave-:template-wave-id:-section-:template-section-id:-frequency">Hz</span>
-                  </p>
-                  <p>
-                    <span class="form-field-label">音量</span>
-                    <span>左/モノラル<input type="text" class="input-text volume-field" value="25.0" id="wave-:template-wave-id:-section-:template-section-id:-volume-0">%</span>
-                    <span>右<input type="text" class="input-text volume-field" value="25.0" id="wave-:template-wave-id:-section-:template-section-id:-volume-1">%</span>
-                  </p>
-                </div>
-                <label for="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-enabled"><h2><input type="checkbox" class="input-checkbox" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-enabled">周波数変調波</h2></label>
-                <div class="sub-section wave-section-optional-form" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-form">
-                  <p>
-                    <span class="form-field-label">種類</span>
-                    <span>
-                      <select id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-type">
-                        <option value="none">なし</option>
-                        <option value="sin" selected="selected">正弦</option>
-                        <option value="pulse-1/8">1/8 パルス</option>
-                        <option value="pulse-1/4">1/4 パルス</option>
-                        <option value="pulse-1/3">1/3 パルス</option>
-                        <option value="rect">矩形</option>
-                        <option value="saw">のこぎり</option>
-                        <option value="triangle">三角</option>
-                        <option value="triangle-1:2">1:2 三角</option>
-                        <option value="triangle-1:3">1:3 三角</option>
-                        <option value="triangle-1:4">1:4 三角</option>
-                        <option value="random-0">ランダム(0)</option>
-                        <option value="random-72">ランダム(72)</option>
-                        <option value="random-428">ランダム(428)</option>
-                        <option value="random-765">ランダム(765)</option>
-                        <option value="gear">歯車</option>
-                        <option value="snake-tongue">ヘビの舌</option>
-                        <option value="stair">階段</option>
-                      </select>
-                      <input type="checkbox" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-reversed"><label for="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-reversed">反転</label>
-                    </span>
-                  </p>
-                  <p>
-                    <span class="form-field-label">オフセット</span>
-                    <span><input type="text" class="input-text" value="0" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-offset">%</span>
-                  </p>
-                  <p>
-                    <span class="form-field-label">周波数</span>
-                    <span><input type="text" class="input-text" value="1.0" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-frequency">Hz</span>
-                  </p>
-                  <p>
-                    <span class="form-field-label">影響度</span>
-                    <span><input type="text" class="input-text volume-field" value="50.0" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-volume">%</span>
-                  </p>
-                </div>
-                <label for="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-enabled"><h2><input type="checkbox" class="input-checkbox" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-enabled">音量変調波</h2></label>
-                <div class="sub-section wave-section-optional-form" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-form">
-                  <p>
-                    <span class="form-field-label">種類</span>
-                    <span>
-                      <select id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-type">
-                        <option value="none">なし</option>
-                        <option value="sin" selected="selected">正弦</option>
-                        <option value="pulse-1/8">1/8 パルス</option>
-                        <option value="pulse-1/4">1/4 パルス</option>
-                        <option value="pulse-1/3">1/3 パルス</option>
-                        <option value="rect">矩形</option>
-                        <option value="saw">のこぎり</option>
-                        <option value="triangle">三角</option>
-                        <option value="triangle-1:2">1:2 三角</option>
-                        <option value="triangle-1:3">1:3 三角</option>
-                        <option value="triangle-1:4">1:4 三角</option>
-                        <option value="random-0">ランダム(0)</option>
-                        <option value="random-72">ランダム(72)</option>
-                        <option value="random-428">ランダム(428)</option>
-                        <option value="random-765">ランダム(765)</option>
-                        <option value="gear">歯車</option>
-                        <option value="snake-tongue">ヘビの舌</option>
-                        <option value="stair">階段</option>
-                      </select>
-                      <input type="checkbox" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-reversed"><label for="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-reversed">反転</label>
-                    </span>
-                  </p>
-                  <p>
-                    <span class="form-field-label">オフセット</span>
-                    <span><input type="text" class="input-text" value="0" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-offset">%</span>
-                  </p>
-                  <p>
-                    <span class="form-field-label">周波数</span>
-                    <span><input type="text" class="input-text" value="1.0" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-frequency">Hz</span>
-                  </p>
-                  <p>
-                    <span class="form-field-label">影響度</span>
-                    <span><input type="text" class="input-text volume-field" value="50.0" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-volume">%</span>
-                  </p>
+                <div class="wave-section-forms" id="wave-:template-wave-id:-sections">
                 </div>
               </div>
             </div>
-            <div class="wave-section-forms" id="wave-:template-wave-id:-sections">
+            <div id="wave-forms">
             </div>
+            <p id="wave-settings-footer"><img class="icon" src="./images/icon-robot.png"><a href="javascript:void(0)" id="add-wave-form">波形を追加</a></p>
           </div>
         </div>
-        <div id="wave-forms">
-        </div>
-        <p><img class="icon" src="./images/icon-robot.png"><a href="javascript:void(0)" id="add-wave-form">波形を追加</a></p>
       </div>
-      <h1>出力<img class="icon" src="./images/icon-obake.png"></h1>
-      <div class="section result">
-        <p>
-          <input type="submit" class="input-submit" value="作成">
-          <audio controls="controls" id="audio"></audio>
-          <a href="javascript:void(0)" target="_blank" id="wave-link">できあがったWAVEファイルへのリンク<img class="icon" src="./images/icon-file.png"></a>
-        </p>
-        <p class="note">編集中の状態は作成ボタンを押した後にブックマークすれば保存できます。</p>
-        <h2>波形</h2>
-        <div class="sub-section">
-          <p><canvas width="960" height="120" id="wave-canvas"></canvas></p>
-          <p><canvas width="960" height="240" id="wave-canvas-scaled"></canvas></p>
+      <div id="output-menu">
+        <div class="section output-settings">
+          <h1>出力設定<img class="icon" src="./images/icon-jerryfish.png"></h1>
+          <div class="section-content">
+            <p>
+              <span class="form-field-label">サンプリングレート</span>
+              <span><input type="text" class="input-text" value="44100" id="output-samples-per-second">Hz</span>
+            </p>
+            <p>
+              <span class="form-field-label">チャンネル数</span>
+              <span>
+                <input type="radio" class="input-radio" name="output-channels" value="1" id="output-channels-1"><label for="output-channels-1" class="radio-label">モノラル</label>
+                <input type="radio" class="input-radio" name="output-channels" value="2" id="output-channels-2" checked="checked"><label for="output-channels-2" class="radio-label">ステレオ</label>
+              </span>
+            </p>
+            <p>
+              <span class="form-field-label">サンプリングサイズ</span>
+              <span>
+                <input type="radio" class="input-radio" name="output-bytes-per-sample" value="1" id="output-bytes-per-sample-1"><label for="output-bytes-per-sample-1" class="radio-label">8ビット</label>
+                <input type="radio" class="input-radio" name="output-bytes-per-sample" value="2" id="output-bytes-per-sample-2" checked="checked"><label for="output-bytes-per-sample-2" class="radio-label">16ビット</label>
+              </span>
+            </p>
+          </div>
         </div>
+        <div class="section output-result">
+          <h1>出力<img class="icon" src="./images/icon-obake.png"></h1>
+          <div class="section-content">
+            <p><input type="submit" class="input-submit" value="作成"></p>
+            <p><audio controls="controls" id="audio"></audio></p>
+            <p><a href="javascript:void(0)" target="_blank" id="wave-link">できあがったWAVEファイルへのリンク<img class="icon" src="./images/icon-file.png"></a></p>
+            <p><canvas width="480" height="60" id="wave-canvas"></canvas></p>
+            <p><canvas width="480" height="120" id="wave-canvas-scaled"></canvas></p>
+            <p><canvas width="480" height="240" id="wave-canvas-scaled-more"></canvas></p>
+          </div>
+          <div class="section-content">
+            <p><a href="./help/">ヘルプ</a></p>
+          </div>
+        </div>
+      </div>
+      <div id="footer">
       </div>
     </form>
-    <div class="section">
-      <p><a href="./help/">ヘルプ</a></p>
-    </div>
     <script type="text/javascript" src="./mt.js"></script>
     <script type="text/javascript" src="./tantone.js"></script>
   </body>
