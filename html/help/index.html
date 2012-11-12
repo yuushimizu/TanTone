@@ -1,26 +1,29 @@
 <html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>ヘルプ - TanTone</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>使い方 - TanTone</title>
     <meta name="description" content="ブラウザ上で音を作れるサイト">
-    <link rel="stylesheet" type="text/css" href="../style.css">
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="./style.css">
   </head>
-  <body class="help">
-    <h1>TanTone ヘルプ<img class="icon" src="./images/icon-riceball.png"></h1>
-    <div class="section">
+  <body>
+    <h1>TanTone<img class="icon" src="./images/icon-riceball.png"></h1>
+    <div class="section-content">
       <p>TanToneはブラウザ上で音を作れるサイトです。波形の形や周波数などを指定して音を作ります。作った音はWAVEファイルとして保存できるので、スマートフォンアプリの効果音などに使えます。Google ChromeとSafariでしか動かないっぽいです。</p>
     </div>
     <h1>目次<img class="icon" src="./images/icon-leaf.png"></h1>
-    <div class="section">
+    <div class="section-content">
       <p><a href="#parts">項目の説明</a></p>
       <p><a href="#save">保存方法</a></p>
       <p><a href="#wave-types">波形の種類</a></p>
-      <p><a href="#wave-modulation">変調波について</a></p>
+      <p><a href="#wave-section">セクションについて：変化する音の作り方</a></p>
+      <p><a href="#wave-modulation">変調波について：ピロピロ音の作り方</a></p>
+      <p><a href="#multi-wave">波形の追加について：複数の音を同時に鳴らす</a></p>
       <p><a href="#samples">サンプル</a></p>
     </div>
     <a name="parts"></a>
     <h1>項目の説明<img class="icon" src="./images/icon-dolphin.png"></h1>
-    <div class="section">
+    <div class="section-content">
       <h2>出力設定</h2>
       <div class="sub-section">
         <p>WAVEファイル全体の出力の設定をします。</p>
@@ -44,11 +47,11 @@
         <h4>移行方法</h4>
         <p>次のセクションへどう移行していくかを決めます。「そのまま」だと次のセクションの影響を受けずに同じ音を長さ分鳴らします。「だんだん次へ」だと徐々に次のセクションの音に変化していき、長さ分が終った時点では完全に次のセクションの音に変わっています。オルガンのように独立した音を順番に鳴らしたいときには「そのまま」、テルミンみたいに無段階な音にしたいときには「だんだん次へ」にします。</p>
         <h4>種類</h4>
-        <p>波の種類です。ここで選んだものによって基本の音色が変わります。詳細はこちら。</p>
+        <p>波の種類です。ここで選んだものによって基本の音色が変わります。<a href="#wave-types">詳細はこちら。</a></p>
         <h4>反転</h4>
         <p>このチェックを付けると波が上下反転します。</p>
         <h4>オフセット</h4>
-        <p>波の開始位置のズレを決めます。100%で1周します。正弦波を25%オフセットすると波の一番高い位置からはじまります。</p>
+        <p>波の周期のズレを決めます。100%で1周します。正弦波を25%オフセットすると波の一番高い位置からはじまります。</p>
         <h4>周波数</h4>
         <p>音の高さです。1秒間に波が何周するかを表します。440Hzは「ラ」の音(A4)で、倍(880Hz)にすると1オクターブ高い「ラ」の音(A5)、半分(220Hz)にすると1オクターブ低い「ラ」の音(A3)になります。</p>
         <h4>音量</h4>
@@ -67,17 +70,17 @@
         <h4>できあがったWAVEファイルへのリンク</h4>
         <p>このリンクの先を保存するとWAVEファイルをダウンロードできます。</p>
         <h4>波形</h4>
-        <p>音の波形です。上側は音全体の波形で、下側は100ミリ秒分に拡大したものです。マウスをで拡大する位置を変えられます。</p>
+        <p>音の波形です。上から音全体の波形、100ミリ秒分に拡大したもの、20ミリ秒分に拡大したものです。マウスで表示する位置を変えられます。</p>
       </div>
     </div>
     <a name="save"></a>
     <h1>保存方法<img class="icon" src="./images/icon-key.png"></h1>
-    <div class="section">
+    <div class="section-content">
       <p>「作成」ボタンを押すと、入力されている情報が現在のURLにくっつきます。それをそのままブックマークしたり、どこかにコピペしておくと、そのURLを開いたときに編集中の状態を復元できます。作った波形を公開するのもらくちんです。</p>
     </div>
     <a name="wave-types"></a>
     <h1>波形の種類<img class="icon" src="./images/icon-sun.png"></h1>
-    <div class="section">
+    <div class="section-content">
       <h2>なし</h2>
       <div class="sub-section">
         <img class="screenshot" src="./images/wave-none.png">
@@ -88,17 +91,17 @@
         <img class="screenshot" src="./images/wave-sin.png">
         <p>正弦波(サイン波)です。基本的な波のひとつで、音叉の音に近いらしいです。柔らかい感じの音です。</p>
       </div>
-      <h2>1/8 パルス</h2>
+      <h2>1/8パルス</h2>
       <div class="sub-section">
         <img class="screenshot" src="./images/wave-pulse-1-8.png">
         <p>パルス波(振幅が最大か最小だけの波)のひとつです。振幅が最大になる部分の幅(パルス幅)が1/8のものです。尖った感じの音で、ファミコンっぽいです。</p>
       </div>
-      <h2>1/4 パルス</h2>
+      <h2>1/4パルス</h2>
       <div class="sub-section">
         <img class="screenshot" src="./images/wave-pulse-1-4.png">
-        <p>パルス波のひとつです。パルス幅が1/4のものです。1/8 パルス波よりは優しい音です。ゲームボーイっぽいです。</p>
+        <p>パルス波のひとつです。パルス幅が1/4のものです。1/8パルス波よりは優しい音です。ゲームボーイっぽいです。</p>
       </div>
-      <h2>1/3 パルス</h2>
+      <h2>1/3パルス</h2>
       <div class="sub-section">
         <img class="screenshot" src="./images/wave-pulse-1-3.png">
         <p>パルス波のひとつです。パルス幅が1/3のものです。</p>
@@ -138,7 +141,7 @@
         <img class="screenshot" src="./images/wave-random.png">
         <p>ランダムな波です。そのまま使えばノイズになります。加工すれば風の音になったりしますし、他の音に少し混ぜると自然な音色になったりします。</p>
         <p>ランダムの場合、周波数が440Hzでもラの音になりません。周波数を低くすれば音は低くなりますが、周波数を高くしても音はある程度までしか高くなりません。</p>
-        <p>「作成」を押すたびに波が変わったりはしません(音が変わっちゃうと困るので)。なので4種類のランダム波を用意しました。後ろに付いてる数字はランダムシードです。</p>
+        <p>「作成」を押すたびに波が変わったりはしません(音が変わっちゃうと困るので)。なので4種類のランダム波を用意しました。うしろに付いてる数字はランダムシードです。</p>
       </div>
       <h2>歯車</h2>
       <div class="sub-section">
@@ -153,16 +156,101 @@
       <h2>階段</h2>
       <div class="sub-section">
         <img class="screenshot" src="./images/wave-stair.png">
-        <p>階段状の波です。1/4 パルス波をすこし柔らかくした感じの音になります。</p>
+        <p>階段状の波です。1/4パルス波をすこし柔らかくした感じの音になります。</p>
+      </div>
+    </div>
+    <a name="wave-section"></a>
+    <h1>セクションについて：変化する音の作り方<img class="icon" src="./images/icon-carrot.png"></h1>
+    <div class="section-content">
+      <h2>違う音を順番に鳴らす</h2>
+      <div class="sub-section">
+        <p>「先頭にセクションを追加」または「右にセクションを追加」を押すとセクションを増やすことができます。セクションを増やすと違う音を順番に鳴らすことができます。</p>
+        <img class="screenshot" src="./images/multi-section-220-to-880.png">
+        <p>上の場合だと、周波数220Hzの音が1秒間鳴ったあと、880Hzの音が1秒間鳴ります。<a href="../#%7B%22output%22%3A%7B%22samplesPerSecond%22%3A44100%2C%22channels%22%3A2%2C%22bytesPerSample%22%3A2%7D%2C%22waves%22%3A%5B%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A1000%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A220%2C%22volume0%22%3A20%2C%22volume1%22%3A20%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%2C%7B%22enabled%22%3Atrue%2C%22length%22%3A1000%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A880%2C%22volume0%22%3A20%2C%22volume1%22%3A20%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%5D%7D%5D%7D">(設定した状態)</a></p>
+      </div>
+      <h2>だんだん高くなる音</h2>
+      <div class="sub-section">
+        <p>セクションの「移行方法」を「だんだん次へ」にすると、そのセクションの音が徐々に次のセクションの音に変化していきます。</p>
+        <img class="screenshot" src="./images/alternation-220-to-880.png">
+        <p>上の例は周波数が220Hzから880Hzまで変化する音です。1秒間かけてだんだん音が高くなり、2オクターブ上がるとそこから1秒間同じ音がなります。<a href="../#%7B%22output%22%3A%7B%22samplesPerSecond%22%3A44100%2C%22channels%22%3A2%2C%22bytesPerSample%22%3A2%7D%2C%22waves%22%3A%5B%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A1000%2C%22alternation%22%3A%22average%22%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A220%2C%22volume0%22%3A25%2C%22volume1%22%3A25%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%2C%7B%22enabled%22%3Atrue%2C%22length%22%3A1000%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A880%2C%22volume0%22%3A25%2C%22volume1%22%3A25%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%5D%7D%5D%7D">(設定した状態)</a></p>
+        <p>右側のセクションの時間を0にすれば、周波数が上がりきったところで音が終ります。</p>
+      </div>
+      <h2>フェードアウトする音</h2>
+      <div class="sub-section">
+        <p>周波数ではなく音量を0に変化させると、音をフェードアウトさせることができます。その際、音量0のセクションは時間を0に設定します。</p>
+        <img class="screenshot" src="./images/alternation-fadeout.png">
+        <p>音が1秒間かけてフェードアウトします。<a href="../#%7B%22output%22%3A%7B%22samplesPerSecond%22%3A44100%2C%22channels%22%3A2%2C%22bytesPerSample%22%3A2%7D%2C%22waves%22%3A%5B%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A1000%2C%22alternation%22%3A%22average%22%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A440%2C%22volume0%22%3A25%2C%22volume1%22%3A25%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%2C%7B%22enabled%22%3Atrue%2C%22length%22%3A0%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A440%2C%22volume0%22%3A0%2C%22volume1%22%3A0%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%5D%7D%5D%7D">(設定した状態)</a></p>
+        <img class="screenshot" src="./images/alternation-fadeout-wave.png">
+        <p>波形はこんな形。</p>
+        <p>左側に「そのまま」のセクションを追加すれば、フェードアウトの時間を調整できます。</p>
+        <p>また、左右のセクションの音量を入れ替えればフェードインする音が作れます。</p>
       </div>
     </div>
     <a name="wave-modulation"></a>
-    <h1>変調波について<img class="icon" src="./images/icon-house.png"></h1>
-    <div class="section">
+    <h1>変調波について：ピロピロ音の作り方<img class="icon" src="./images/icon-house.png"></h1>
+    <div class="section-content">
+      <h2>周波数変調波</h2>
+      <div class="sub-section">
+        <p>周波数変調波を有効にすると、一定周期で周波数を変化させることができます。</p>
+        <img class="screenshot" src="./images/rate-modulation-wave-before.png">
+        <p>上の波形は変調波を有効にしてない状態です。これに対して周波数変調波を有効にすると・・・</p>
+        <img class="screenshot" src="./images/rate-modulation-wave-after.png">
+        <p>このように周波数の高い部分(赤)と低い部分(青)ができあがります。</p>
+        <p>周波数変調波を有効にするには、セクションの「周波数変調波」のチェックをオンにします。チェックすると下のような周波数変調波の設定項目が表示されます。</p>
+        <img class="screenshot" src="./images/rate-modulation.png">
+        <h4>種類</h4>
+        <p>変調波の形を決めます。正弦波なら滑らかに変化するようになり、矩形波なら即座に変化するようになります。</p>
+        <h4>反転</h4>
+        <p>このチェックを付けると、変調による周波数の高低を入れ替わります。</p>
+        <h4>オフセット</h4>
+        <p>変調波の周期のズレを決めます。</p>
+        <h4>周波数</h4>
+        <p>変調の頻度です。1だと1秒間に波の1周期分の変調が起こります。低い(30くらいまで)だと音の変化がわかりやすく、高いとひとつの音が鳴っているように聴こえます。</p>
+        <h4>影響度</h4>
+        <p>元の波に対してどれだけ周波数を変化させるかを決めます。0%の場合は変調波を無効にした場合と同じで、50%なら元の周波数の半分から1.5倍の間で変化し、100%なら0から元の周波数の2倍の間で変化します。</p>
+        <h3>例</h3>
+        <div class="sub-section">
+          <p><a href="../#%7B%22output%22%3A%7B%22samplesPerSecond%22%3A44100%2C%22channels%22%3A2%2C%22bytesPerSample%22%3A2%7D%2C%22waves%22%3A%5B%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A2000%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A440%2C%22volume0%22%3A25%2C%22volume1%22%3A25%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Atrue%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A2%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%5D%7D%5D%7D">440Hzの正弦波に対して2Hzの正弦波で変調</a>：UFOが飛んでるような効果音になります</p>
+          <p><a href="../#%7B%22output%22%3A%7B%22samplesPerSecond%22%3A44100%2C%22channels%22%3A2%2C%22bytesPerSample%22%3A2%7D%2C%22waves%22%3A%5B%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A1500%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22triangle%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A880%2C%22volume0%22%3A25%2C%22volume1%22%3A25%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Atrue%2C%22type%22%3A%22stair%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A8%2C%22volume%22%3A25%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%5D%7D%5D%7D">880Hzの三角波に対して8Hzの階段波で変調</a>：ゲームのスロットマシンが回ってる時みたいな音になります</p>
+        </div>
+      </div>
+      <h2>振幅変調波</h2>
+      <div class="sub-section">
+        <p>振幅変調波を有効にすると、一定周期で音量を変化させることができます。</p>
+        <img class="screenshot" src="./images/volume-modulation-wave-after.png">
+        <p>振幅変調波を有効にするには、セクションの「振幅変調波」のチェックをオンにします。</p>
+        <img class="screenshot" src="./images/volume-modulation.png">
+        <p>設定項目は周波数変調波と同じで、元の波の周波数の代わりに音量に影響を与えます。</p>
+        <h3>例</h3>
+        <div class="sub-section">
+          <p><a href="../#%7B%22output%22%3A%7B%22samplesPerSecond%22%3A44100%2C%22channels%22%3A2%2C%22bytesPerSample%22%3A2%7D%2C%22waves%22%3A%5B%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A1000%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A440%2C%22volume0%22%3A25%2C%22volume1%22%3A25%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Atrue%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A16%2C%22volume%22%3A50%7D%7D%5D%7D%5D%7D">440Hzの正弦波に対して16Hzの正弦波で変調</a>：電話の呼び出し音みたいな音になります</p>
+          <p><a href="../#%7B%22output%22%3A%7B%22samplesPerSecond%22%3A44100%2C%22channels%22%3A2%2C%22bytesPerSample%22%3A2%7D%2C%22waves%22%3A%5B%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A1000%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22random-0%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A440%2C%22volume0%22%3A25%2C%22volume1%22%3A25%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Atrue%2C%22type%22%3A%22pulse-1%2F4%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A16%2C%22volume%22%3A75%7D%7D%5D%7D%5D%7D">ノイズに対して16Hzの1/4パルス波で変調</a>：工事現場っぽい音になります</p>
+        </div>
+      </div>
+    </div>
+    <a name="multi-wave"></a>
+    <h1>波形の追加について：複数の音を同時に鳴らす<img class="icon" src="./images/icon-ghost.png"></h1>
+    <div class="section-content">
+      <h2>複数の音を同時に鳴らす</h2>
+      <div class="sub-section">
+        <p>「波形の追加」を押すと波形を追加できます。波形が複数ある場合、全ての波形を足し合わせた音が作られます。</p>
+        <img class="screenshot" src="./images/multi-wave.png">
+        <p>上の場合、周波数880Hz(高いラ)の音と周波数220Hz(低いラ)の音が同時に鳴るように聴こえます。<a href="../#%7B%22output%22%3A%7B%22samplesPerSecond%22%3A44100%2C%22channels%22%3A2%2C%22bytesPerSample%22%3A2%7D%2C%22waves%22%3A%5B%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A1000%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A220%2C%22volume0%22%3A10%2C%22volume1%22%3A10%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%5D%7D%2C%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A1000%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A880%2C%22volume0%22%3A20%2C%22volume1%22%3A20%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%5D%7D%5D%7D">(設定した状態)</a></p>
+        <img class="screenshot" src="./images/multi-wave-wave.png">
+        <p>できあがる波はこんな形です。</p>
+      </div>
+      <h2>左右から別々の音を鳴らす</h2>
+      <div class="sub-section">
+        <p>音量を左右別々に設定できるのを応用して、波形毎に左右どちらかの音量を0にすると左右から別々の音を鳴らすことができます。</p>
+        <img class="screenshot" src="./images/multi-wave-lr.png">
+        <p>上の場合、左側からは周波数220Hzの音が聴こえ、右側からは周波数880Hzの音が聴こえます。イヤホンをするとわかりやすいです。<a href="../#%7B%22output%22%3A%7B%22samplesPerSecond%22%3A44100%2C%22channels%22%3A2%2C%22bytesPerSample%22%3A2%7D%2C%22waves%22%3A%5B%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A1000%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A220%2C%22volume0%22%3A20%2C%22volume1%22%3A0%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%5D%7D%2C%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A1000%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A880%2C%22volume0%22%3A0%2C%22volume1%22%3A20%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%5D%7D%5D%7D">(設定した状態)</a></p>
+        <img class="screenshot" src="./images/multi-wave-lr-wave.png">
+        <p>表示される波はこんなようになります。左側の音は緑色、右側の音は青色で表示されます。</p>
+      </div>
     </div>
     <a name="samples"></a>
     <h1>サンプル<img class="icon" src="./images/icon-uma.png"></h1>
-    <div class="section">
+    <div class="section-content">
       <p>こんな音が作れます。</p>
       <p><a href="../#%7B%22output%22%3A%7B%22samplesPerSecond%22%3A44100%2C%22channels%22%3A2%2C%22bytesPerSample%22%3A2%7D%2C%22waves%22%3A%5B%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A1200%2C%22alternation%22%3A%22average%22%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1320%2C%22volume0%22%3A25%2C%22volume1%22%3A25%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%2C%7B%22enabled%22%3Atrue%2C%22length%22%3A0%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A440%2C%22volume0%22%3A0%2C%22volume1%22%3A0%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%5D%7D%5D%7D">落下音</a></p>
       <p><a href="../#%7B%22output%22%3A%7B%22samplesPerSecond%22%3A44100%2C%22channels%22%3A2%2C%22bytesPerSample%22%3A2%7D%2C%22waves%22%3A%5B%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A200%2C%22alternation%22%3A%22average%22%2C%22type%22%3A%22rect%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A330%2C%22volume0%22%3A25%2C%22volume1%22%3A25%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%2C%7B%22enabled%22%3Atrue%2C%22length%22%3A0%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22rect%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A880%2C%22volume0%22%3A0%2C%22volume1%22%3A0%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%5D%7D%5D%7D">ジャンプ</a></p>
@@ -171,6 +259,7 @@
       <p><a href="../#%7B%22output%22%3A%7B%22samplesPerSecond%22%3A44100%2C%22channels%22%3A2%2C%22bytesPerSample%22%3A2%7D%2C%22waves%22%3A%5B%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A1000%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A440%2C%22volume0%22%3A25%2C%22volume1%22%3A25%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Atrue%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A16%2C%22volume%22%3A50%7D%7D%5D%7D%5D%7D">電話のベル</a></p>
       <p><a href="../#%7B%22output%22%3A%7B%22samplesPerSecond%22%3A44100%2C%22channels%22%3A2%2C%22bytesPerSample%22%3A2%7D%2C%22waves%22%3A%5B%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A2000%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22random-428%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A110%2C%22volume0%22%3A25%2C%22volume1%22%3A25%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Atrue%2C%22type%22%3A%22pulse-1%2F4%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A10%2C%22volume%22%3A80%7D%7D%5D%7D%2C%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A2000%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22random-0%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A440%2C%22volume0%22%3A10%2C%22volume1%22%3A10%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%5D%7D%5D%7D">プロペラっぽい音</a></p>
       <p><a href="../#%7B%22output%22%3A%7B%22samplesPerSecond%22%3A44100%2C%22channels%22%3A2%2C%22bytesPerSample%22%3A2%7D%2C%22waves%22%3A%5B%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A150%2C%22alternation%22%3A%22average%22%2C%22type%22%3A%22random-72%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A880%2C%22volume0%22%3A10%2C%22volume1%22%3A10%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%2C%7B%22enabled%22%3Atrue%2C%22length%22%3A0%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22random-428%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A880%2C%22volume0%22%3A30%2C%22volume1%22%3A30%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%2C%7B%22enabled%22%3Atrue%2C%22length%22%3A100%2C%22alternation%22%3A%22average%22%2C%22type%22%3A%22random-428%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A880%2C%22volume0%22%3A10%2C%22volume1%22%3A10%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%2C%7B%22enabled%22%3Atrue%2C%22length%22%3A500%2C%22alternation%22%3A%22average%22%2C%22type%22%3A%22random-765%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A880%2C%22volume0%22%3A30%2C%22volume1%22%3A30%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Atrue%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A5%7D%7D%2C%7B%22enabled%22%3Atrue%2C%22length%22%3A3000%2C%22alternation%22%3A%22average%22%2C%22type%22%3A%22random-765%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A880%2C%22volume0%22%3A3%2C%22volume1%22%3A3%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A4%2C%22volume%22%3A5%7D%7D%2C%7B%22enabled%22%3Atrue%2C%22length%22%3A0%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22random-0%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A440%2C%22volume0%22%3A0%2C%22volume1%22%3A0%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%5D%7D%5D%7D">波っぽい音</a></p>
+      <p><a href="../#%7B%22output%22%3A%7B%22samplesPerSecond%22%3A44100%2C%22channels%22%3A2%2C%22bytesPerSample%22%3A2%7D%2C%22waves%22%3A%5B%7B%22sections%22%3A%5B%7B%22enabled%22%3Atrue%2C%22length%22%3A1000%2C%22alternation%22%3A%22average%22%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A440%2C%22volume0%22%3A25%2C%22volume1%22%3A0%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%2C%7B%22enabled%22%3Atrue%2C%22length%22%3A0%2C%22alternation%22%3A%22keep%22%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A440%2C%22volume0%22%3A0%2C%22volume1%22%3A25%2C%22frequencyModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%2C%22volumeModulation%22%3A%7B%22enabled%22%3Afalse%2C%22type%22%3A%22sin%22%2C%22reversed%22%3Afalse%2C%22offset%22%3A%220%22%2C%22frequency%22%3A1%2C%22volume%22%3A50%7D%7D%5D%7D%5D%7D">左から右に移動する音</a></p>
     </div>
   </body>
 </html>

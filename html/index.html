@@ -1,8 +1,9 @@
 <html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>TanTone</title>
     <meta name="description" content="ブラウザ上で音を作れるサイト">
+    <link rel="shortcut icon" href="./images/favicon.ico">
     <link rel="stylesheet" type="text/css" href="./style.css">
   </head>
   <body>
@@ -52,9 +53,9 @@
                           <select id="wave-:template-wave-id:-section-:template-section-id:-type">
                             <option value="none">なし</option>
                             <option value="sin" selected="selected">正弦</option>
-                            <option value="pulse-1/8">1/8 パルス</option>
-                            <option value="pulse-1/4">1/4 パルス</option>
-                            <option value="pulse-1/3">1/3 パルス</option>
+                            <option value="pulse-1/8">1/8パルス</option>
+                            <option value="pulse-1/4">1/4パルス</option>
+                            <option value="pulse-1/3">1/3パルス</option>
                             <option value="rect">矩形</option>
                             <option value="saw">のこぎり</option>
                             <option value="triangle">三角</option>
@@ -94,9 +95,9 @@
                           <select id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-type">
                             <option value="none">なし</option>
                             <option value="sin" selected="selected">正弦</option>
-                            <option value="pulse-1/8">1/8 パルス</option>
-                            <option value="pulse-1/4">1/4 パルス</option>
-                            <option value="pulse-1/3">1/3 パルス</option>
+                            <option value="pulse-1/8">1/8パルス</option>
+                            <option value="pulse-1/4">1/4パルス</option>
+                            <option value="pulse-1/3">1/3パルス</option>
                             <option value="rect">矩形</option>
                             <option value="saw">のこぎり</option>
                             <option value="triangle">三角</option>
@@ -127,7 +128,7 @@
                         <span><input type="text" class="input-text volume-field" value="50.0" id="wave-:template-wave-id:-section-:template-section-id:-frequency-modulation-volume">%</span>
                       </p>
                     </div>
-                    <label for="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-enabled"><h2><input type="checkbox" class="input-checkbox" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-enabled"><span class="checkbox-label">音量変調波</span></h2></label>
+                    <label for="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-enabled"><h2><input type="checkbox" class="input-checkbox" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-enabled"><span class="checkbox-label">振幅変調波</span></h2></label>
                     <div class="sub-section wave-section-optional-form" id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-form">
                       <p>
                         <span class="form-field-label">種類</span>
@@ -135,9 +136,9 @@
                           <select id="wave-:template-wave-id:-section-:template-section-id:-volume-modulation-type">
                             <option value="none">なし</option>
                             <option value="sin" selected="selected">正弦</option>
-                            <option value="pulse-1/8">1/8 パルス</option>
-                            <option value="pulse-1/4">1/4 パルス</option>
-                            <option value="pulse-1/3">1/3 パルス</option>
+                            <option value="pulse-1/8">1/8パルス</option>
+                            <option value="pulse-1/4">1/4パルス</option>
+                            <option value="pulse-1/3">1/3パルス</option>
                             <option value="rect">矩形</option>
                             <option value="saw">のこぎり</option>
                             <option value="triangle">三角</option>
@@ -213,9 +214,7 @@
             <p><canvas width="480" height="60" id="wave-canvas"></canvas></p>
             <p><canvas width="480" height="120" id="wave-canvas-scaled"></canvas></p>
             <p><canvas width="480" height="240" id="wave-canvas-scaled-more"></canvas></p>
-          </div>
-          <div class="section-content">
-            <p><a href="./help/">ヘルプ</a></p>
+            <p><a href="./help/">使い方<img class="icon" src="./images/icon-fish.png"></a></p>
           </div>
         </div>
       </div>
