@@ -83,3 +83,12 @@ p {
     margin: 1em;
     border: solid 1px #346;
 }
+
+audio.sample {
+    margin-left: 2em;
+    margin-right: 2em;
+}
+
+.sample-sound-name {
+    font-weight: bold;
+}
